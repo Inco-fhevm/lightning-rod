@@ -3,6 +3,7 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
 import FaucetButton from '../components/FaucetButton';
+import AddTwoValue from '../components/AddTwoValue';
 
 const Home: NextPage = () => {
   return (
@@ -20,6 +21,8 @@ const Home: NextPage = () => {
         <ConnectButton />
         <br/>
         <FaucetButton />
+        <br/>
+        "lastResult" as read from AddTwo contract: <AddTwoValue />
       </main>
     </div>
   );
