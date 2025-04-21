@@ -42,3 +42,5 @@ export const addTwoAbi = [
     stateMutability: "view",
   },
 ] as const;
+
+export const addTwoAddress = "0x723c2be5E61e7bBec4684DEfEaE63656ad3eaa10";
