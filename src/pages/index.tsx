@@ -18,6 +18,7 @@ const Home: NextPage = () => {
       <main className={styles.main}>
         <h1>Coucou</h1>
         <ConnectButton />
+        <br/>
         <FaucetButton />
       </main>
     </div>
