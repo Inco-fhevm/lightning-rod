@@ -2,27 +2,9 @@ import { ConnectButton } from '@rainbow-me/rainbowkit';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
-import { privateKeyToAccount } from 'viem/accounts';
-import { useAccount, useSendTransaction } from 'wagmi';
-import { parseEther } from 'viem';
-
-const FAUCET_PRIVATE_KEY = "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80";
+import FaucetButton from '../components/FaucetButton';
 
 const Home: NextPage = () => {
-
-  const { sendTransaction} = useSendTransaction()
-  const {address} = useAccount()
-
-  const giveFromFaucet = async () => {
-     const faucetAccount = privateKeyToAccount(FAUCET_PRIVATE_KEY)
-    
-    sendTransaction({
-      account: faucetAccount,
-      to: address!,
-      value: parseEther('1')
-    })
-  }
-
   return (
     <div className={styles.container}>
       <Head>
@@ -36,7 +18,7 @@ const Home: NextPage = () => {
       <main className={styles.main}>
         <h1>Coucou</h1>
         <ConnectButton />
-        <button onClick={giveFromFaucet}>Get 1 ETH from faucet</button>
+        <FaucetButton />
       </main>
     </div>
   );
