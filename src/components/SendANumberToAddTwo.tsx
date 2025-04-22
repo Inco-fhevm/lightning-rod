@@ -1,6 +1,8 @@
 import { useWriteContract } from "wagmi";
 import { addTwoAbi, addTwoAddress } from "../abis/AddTwo";
 
+const toInput:bigint = BigInt(5); 
+
 const SendANumberToAddTwo = () => {
     const { writeContract} = useWriteContract()
     
