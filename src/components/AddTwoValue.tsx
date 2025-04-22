@@ -10,4 +10,4 @@ const AddTwoValue = () => {
     return <>{lastResult.data}</>
 }
 
-export default AddTwoValue 
+export default AddTwoValue;

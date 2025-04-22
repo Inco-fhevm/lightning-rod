@@ -1,9 +1,7 @@
-import { Lightning } from "@inco/js";
-import { PlaintextWithContext } from "@inco/js/dist/encryption";
+import { generateSecp256k1Keypair, decodeSecp256k1PublicKey, getEciesEncryptor, incoLiteReencryptor } from "@inco/js";
 import { hexToBytes } from "viem";
 import { getAddress, formatUnits } from "viem";
 
-const { generateSecp256k1Keypair, decodeSecp256k1PublicKey, getEciesEncryptor, incoLiteReencryptor } = Lightning;
 /**
  * @dev Network configuration constants for Inco FHE operations
  * Base Sepolia testnet identifier for the network
