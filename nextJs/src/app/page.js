@@ -1,55 +1,98 @@
 "use client";
 
-import { useAccount } from "wagmi";
+import { useAccount, usePublicClient, useWalletClient } from "wagmi";
 import { useWeb3Modal } from "@web3modal/wagmi/react";
 import { useDisconnect } from "wagmi";
 import { useEffect, useState } from "react";
 import { Wallet, LogOut, User } from "lucide-react";
 import EncryptedTokenInterface from "@/components/encrypted-token-ineterface";
 import EncryptedSend from "@/components/encrypted-send";
+import contractArtifact from "@/utils/artifact";
 
 export default function Home() {
   const { isConnected, address } = useAccount();
   const { open } = useWeb3Modal();
   const { disconnect } = useDisconnect();
+  const publicClient = usePublicClient();
+  const { data: walletClient } = useWalletClient();
+
   const [mounted, setMounted] = useState(false);
+  // Deployment state
+  const [deploying, setDeploying] = useState(false);
+  const [deployedAddress, setDeployedAddress] = useState(null);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Handle the disconnect action
   const handleDisconnect = () => {
     try {
       disconnect();
-      setTimeout(() => {
-        window.location.reload();
-      }, 100);
-    } catch (error) {
-      console.error("Disconnect error:", error);
+      setTimeout(() => window.location.reload(), 100);
+    } catch (err) {
+      console.error("Disconnect error:", err);
     }
   };
 
-  // Handler for the connect button
   const handleConnect = () => {
     try {
-      console.log("Connecting wallet...");
       open();
-    } catch (error) {
-      console.error("Connect error:", error);
+    } catch (err) {
+      console.error("Connect error:", err);
     }
   };
 
-  if (!mounted)
+  const handleDeploy = async () => {
+    if (!walletClient) {
+      console.error("No wallet client available");
+      return;
+    }
+    setDeploying(true);
+    try {
+      const { abi, bytecode } = contractArtifact;
+      const txHash = await walletClient.deployContract({ abi, bytecode, args: [] });
+      const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
+      setDeployedAddress(receipt.contractAddress);
+      console.log("Contract deployed at", receipt.contractAddress);
+    } catch (err) {
+      console.error("Deployment failed:", err);
+    } finally {
+      setDeploying(false);
+    }
+  };
+
+  if (!mounted) {
     return (
       <div className="bg-gray-900 min-h-screen flex items-center justify-center">
         <div className="text-white animate-pulse">Loading...</div>
       </div>
     );
+  }
 
   return (
     <div className="bg-gray-900 min-h-screen">
       <div className="max-w-4xl mx-auto p-6">
+        {/* Deploy ERC20 Button */}
+        <div className="flex justify-end mb-4">
+          <button
+            onClick={handleDeploy}
+            disabled={deploying || !walletClient}
+            className="bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white px-4 py-2 rounded-lg transition-colors"
+          >
+            {deploying
+              ? "Deploying..."
+              : deployedAddress
+              ? "Deployed"
+              : "Deploy ERC20"}
+          </button>
+        </div>
+        {deployedAddress && (
+          <div className="text-sm text-gray-300 mb-4">
+            Deployed at: <span className="text-green-400">{deployedAddress}</span>
+          </div>
+        )}
+
+        {/* Header + Wallet UI */}
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-white flex items-center gap-3">
             <Wallet className="text-blue-400" />
@@ -61,8 +104,7 @@ export default function Home() {
                 <div className="flex items-center gap-2">
                   <User className="text-blue-400 w-5 h-5" />
                   <span className="text-sm text-white truncate max-w-[150px]">
-                    {address?.substring(0, 6)}...
-                    {address?.substring(address.length - 4)}
+                    {address.substring(0, 6)}...{address.substring(address.length - 4)}
                   </span>
                 </div>
                 <button
@@ -85,6 +127,7 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Main Content */}
         {isConnected ? (
           <div className="grid md:grid-cols-2 place-items-start gap-6 mt-32">
             <EncryptedTokenInterface />
