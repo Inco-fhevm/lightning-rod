@@ -2,6 +2,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { Web3Provider } from "@/provider/web3-provider";
 import { ChainBalanceProvider } from "@/provider/balance-provider";
+import AppWrapper from "@/components/app-wrapper";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -26,9 +27,7 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Web3Provider>
-          <ChainBalanceProvider>
-            <div>{children}</div>
-          </ChainBalanceProvider>
+         <AppWrapper>{children}</AppWrapper>
         </Web3Provider>
       </body>
     </html>

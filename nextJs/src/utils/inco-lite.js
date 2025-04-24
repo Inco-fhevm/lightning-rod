@@ -34,6 +34,8 @@ export const encryptValue = async ({ value, address, contractAddress }) => {
 
 export const reEncryptValue = async ({ chainId, walletClient, handle }) => {
   // Validate that all required parameters are provided
+
+  console.log('walletClient', walletClient);
   if (!chainId || !walletClient || !handle) {
     throw new Error("Missing required parameters for creating reencryptor");
   }
@@ -42,8 +44,7 @@ export const reEncryptValue = async ({ chainId, walletClient, handle }) => {
     // Create a reencryptor using the KMS service
     const incoConfig = await getConfig();
     console.log("walletClient", walletClient);
-    const reencryptorForMainWallet = await incoConfig.getReencryptor(walletClient.data);
-    await new Promise((resolve) => setTimeout(resolve, 2000)); // Wait for the transfer to be processed
+    const reencryptorForMainWallet = await incoConfig.getReencryptor(walletClient);
     const decryptedResult = await reencryptorForMainWallet({ handle: handle.toString() });
 
     console.log("Decrypted result:", decryptedResult);

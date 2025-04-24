@@ -14,11 +14,8 @@ import {
 } from "wagmi";
 import { getContract } from "viem";
 
-import {
-  ENCRYPTED_ERC20_CONTRACT_ADDRESS,
-  ENCRYPTEDERC20ABI,
-} from "@/utils/contract";
-
+import { ENCRYPTEDERC20ABI } from "@/utils/contract";
+import { useTokenDeploy } from "./token-deploy-provider";
 import { getConfig, reEncryptValue } from "@/utils/inco-lite";
 
 const ChainBalanceContext = createContext();
@@ -30,22 +27,15 @@ export const ChainBalanceProvider = ({ children }) => {
   const [encryptedError, setEncryptedError] = useState(null);
 
   const publicClient = usePublicClient();
-  const walletClient = useWalletClient();
+  const { data: walletClientData } = useWalletClient();
   const chainId = useChainId();
+  
+  // Use the token deploy context to get the deployed address
+  const { deployedAddress } = useTokenDeploy();
 
-  // Encrypted balance fetch function
   const fetchEncryptedBalance = useCallback(
-    /**
-     * @dev
-     * `wc` refers to the wallet client. Pass this wallet client only if the
-     * wallet client of this component is not accessible.
-     *
-     * This serves as a workaround, primarily needed when calling decryption
-     * immediately after `writeContractAsync`.
-     */
-
     async ({ wc: walletClient }) => {
-      if (!address || !publicClient || !walletClient) return;
+      if (!address || !publicClient || !walletClient || !deployedAddress) return;
 
       setIsEncryptedLoading(true);
       setEncryptedError(null);
@@ -53,7 +43,7 @@ export const ChainBalanceProvider = ({ children }) => {
       try {
         const encryptedERC20Contract = getContract({
           abi: ENCRYPTEDERC20ABI,
-          address: ENCRYPTED_ERC20_CONTRACT_ADDRESS,
+          address: deployedAddress,
           client: { public: publicClient, wallet: walletClient },
         });
 
@@ -65,7 +55,6 @@ export const ChainBalanceProvider = ({ children }) => {
         console.log("Balance handle:", balanceHandle);
 
         if (
-          // indicates balance is not generated yet
           balanceHandle.toString() ===
           "0x0000000000000000000000000000000000000000000000000000000000000000"
         ) {
@@ -73,17 +62,10 @@ export const ChainBalanceProvider = ({ children }) => {
           return;
         }
 
-        // Get the config as per selected chain
         const cfg = await getConfig();
 
-        console.log(cfg)
+        console.log(cfg);
         let decrypted;
-
-        /**
-         * @dev
-         * `reEncryptValue` is a function that takes a handle as input and
-         * returns the decrypted value.
-         */
 
         decrypted = await reEncryptValue({
           chainId: cfg.chainId,
@@ -99,7 +81,7 @@ export const ChainBalanceProvider = ({ children }) => {
         setIsEncryptedLoading(false);
       }
     },
-    [address, chainId, publicClient, walletClient]
+    [address, chainId, publicClient, deployedAddress]
   );
 
   const contextValue = useMemo(
