@@ -35,8 +35,8 @@
     },
   },
   "overrides": {
-    "@inco/js": "0.1.31",
     "@inco/lightning": "0.1.30",
+    "@inco/js": "0.1.31",
   },
   "packages": {
     "@adraffy/ens-normalize": ["@adraffy/ens-normalize@1.11.0", "", {}, "sha512-/3DDPKHqqIqxUULp8yP4zODUY1i+2xvVWsv8A79xGWdCAG+8sb0hRh0Rk2QyOJUnnbyPUAZYcpBuRe3nS2OIUg=="],

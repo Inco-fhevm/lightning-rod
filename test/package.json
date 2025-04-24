@@ -2,7 +2,7 @@
   "name": "@inco/lightning-rod-test",
   "license": "Apache-2.0",
   "scripts": {
-    "test:e2e": "bun vitest run src/lightning.local.e2e.test.ts",
+    "test:e2e": "bun vitest run src/lightning.local.e2e.test.ts ",
     "test:tsc": "tsc --noEmit",
     "generate:abis": "bun wagmi generate"
   },

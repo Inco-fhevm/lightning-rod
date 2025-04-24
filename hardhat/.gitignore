@@ -1,0 +1,20 @@
+.env
+.npmrc
+.DS_Store
+
+# Hardhat files
+/cache
+/artifacts
+
+# TypeChain files
+node_modules
+/typechain
+/typechain-types
+
+# solidity-coverage files
+/coverage
+/coverage.json
+
+# Hardhat Ignition default folder for deployments against a local node
+/ignition/deployments/
+.env
