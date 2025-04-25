@@ -37,7 +37,7 @@
   },
   "overrides": {
     "@inco/lightning": "0.1.30",
-    "@inco/js": "0.1.32",
+    "@inco/js": "0.1.33",
   },
   "packages": {
     "@adraffy/ens-normalize": ["@adraffy/ens-normalize@1.11.0", "", {}, "sha512-/3DDPKHqqIqxUULp8yP4zODUY1i+2xvVWsv8A79xGWdCAG+8sb0hRh0Rk2QyOJUnnbyPUAZYcpBuRe3nS2OIUg=="],
@@ -128,7 +128,7 @@
 
     "@grpc/proto-loader": ["@grpc/proto-loader@0.7.15", "", { "dependencies": { "lodash.camelcase": "^4.3.0", "long": "^5.0.0", "protobufjs": "^7.2.5", "yargs": "^17.7.2" }, "bin": { "proto-loader-gen-types": "build/bin/proto-loader-gen-types.js" } }, "sha512-tMXdRCfYVixjuFK+Hk0Q1s38gV9zDiDJfWL3h1rv4Qc39oILCu1TRTDt7+fGUI8K4G1Fj125Hx/ru3azECWTyQ=="],
 
-    "@inco/js": ["@inco/js@0.1.32", "", { "dependencies": { "@bufbuild/protobuf": "^2.2.3", "@connectrpc/connect": "^2.0.0", "@connectrpc/connect-node": "^2.0.0", "@connectrpc/connect-web": "^2.0.1", "@cosmjs/proto-signing": "^0.32.4", "@cosmjs/stargate": "^0.32.4", "@cosmjs/tendermint-rpc": "^0.32.4", "@grpc/grpc-js": "^1.12.2", "@types/elliptic": "^6.4.18", "@wagmi/cli": "^2.2.0", "bincode-ts": "^0.1.1", "ecies-geth": "^1.7.5", "effect": "^3.13.6", "sha3": "^2.1.4", "viem": "^2.23.6" } }, "sha512-PmKzeGpxXjYBIouwq7T9qt8lUUFeFYZh7Fkqlo7i792C/IyWeW5SNkQO5p9YixPNjfrf0/Od4rnLffshLMMDfw=="],
+    "@inco/js": ["@inco/js@0.1.33", "", { "dependencies": { "@bufbuild/protobuf": "^2.2.3", "@connectrpc/connect": "^2.0.0", "@connectrpc/connect-node": "^2.0.0", "@connectrpc/connect-web": "^2.0.1", "@cosmjs/proto-signing": "^0.32.4", "@cosmjs/stargate": "^0.32.4", "@cosmjs/tendermint-rpc": "^0.32.4", "@grpc/grpc-js": "^1.12.2", "@types/elliptic": "^6.4.18", "@wagmi/cli": "^2.2.0", "bincode-ts": "^0.1.1", "ecies-geth": "^1.7.5", "effect": "^3.13.6", "sha3": "^2.1.4", "viem": "^2.23.6" } }, "sha512-K+0roA7sEXKpz7qy7+/HkexUm7MuNXnp98TFSglessA7K2YkrywrEoKZEHXi+nNdpLE0i73FgUaLOqitp7wiMw=="],
 
     "@inco/lightning": ["@inco/lightning@0.1.30", "", { "dependencies": { "@inco/shared": "^0.1.0", "@openzeppelin/contracts": "^5.2.0", "@openzeppelin/contracts-upgradeable": "^5.2.0", "ds-test": "https://github.com/dapphub/ds-test", "forge-std": "https://github.com/foundry-rs/forge-std", "tsx": "^4.19.3" } }, "sha512-KyNo+9muUegR+/tDF7UFifem4sumXZIRTeIvCGpfSd2CldcjkCoG+dqvf+Vwh9li7GS7q5dDZpM/W1JSkcbr2g=="],
 
