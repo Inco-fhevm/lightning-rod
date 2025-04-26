@@ -13,7 +13,7 @@ Further details of our architecture can be found at our [Concepts Guide](https:/
 Our system consist of three components:
 
 1. The Ethereum host chain on which our protocol contracts are deployed and which maintains global state and consensus
-2. Our Inco Lighting protocol contract that provides functions for encrypted computation and public decrytpion
+2. Our Inco Lighting protocol contract that provides functions for encrypted computation and public decryption
 3. Our Covalidator network that listens to Ethereum event, performs private computation, maintains a ciphertext store, and provides APIs for reencryption
 4. Our Inco JS SDK that provides functionality for encrypted inputs and decrypting outputs via reencryption to expose private values belonging to a use privately
 
