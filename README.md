@@ -26,7 +26,7 @@ to be installed.
 
 ### Install dependencies
 
-To install the depednencies, run:
+To install the dependencies, run:
 
 ```bash
 bun install
