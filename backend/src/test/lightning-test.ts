@@ -73,7 +73,7 @@ export function runE2ETest(valueToAdd: number, zap: Lightning, cfg: E2EConfig) {
         dappAddress,
       });
 
-      // Already start watching for the fullfilled event. This is because on
+      // Already start watching for the fulfilled event. This is because on
       // Monad, stuff is happening so fast that it's better to start watching
       // for events as soon as possible.
       const incoLite = getContract({
@@ -84,7 +84,7 @@ export function runE2ETest(valueToAdd: number, zap: Lightning, cfg: E2EConfig) {
       if (!incoLite) {
         throw new Error(`IncoLite contract not found at address ${zap.executorAddress}`);
       }
-      callbackFulfillPromise = new Promise((resolve) => {
+      requestFulfilledPromise = new Promise((resolve) => {
         incoLite.watchEvent.RequestFulfilled({ requestId }, { onLogs: () => resolve() });
       });
 
