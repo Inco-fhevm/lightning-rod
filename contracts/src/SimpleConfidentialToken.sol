@@ -42,7 +42,7 @@ contract SimpleConfidentialToken {
     function transfer(address to, euint256 value) public returns (ebool success) {
         // always perform this check on encrypted parameters. In this case, a malicious caller could try to pass
         // the handle corresponding of a victim's balance to deduce its value, it wouldn't revert without this check
-        // has this token contract holds allowance on the balances of all holders.
+        // as this token contract holds allowance on the balances of all holders.
         require(msg.sender.isAllowed(value), "SimpleConfidentialToken: unauthorized value handle access");
 
         return _transfer(to, value);
