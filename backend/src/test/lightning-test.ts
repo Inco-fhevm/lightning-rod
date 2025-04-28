@@ -92,7 +92,7 @@ export function runE2ETest(valueToAdd: number, zap: Lightning, cfg: E2EConfig) {
       const res = await addTwo(dappAddress, inputCt, walletClient, publicClient, cfg);
       resultHandle = res.resultHandle;
       requestId = res.requestId;
-    });
+    },100_000);//Include 100s timeout for sepolia backend testing
 
     it('should read from the decrypted message', async () => {
       console.log();
