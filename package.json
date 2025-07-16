@@ -25,7 +25,7 @@
     "typescript": "^5.8.3"
   },
   "overrides": {
-    "@inco/lightning": "0.1.30",
-    "@inco/js": "0.1.33"
+    "@inco/lightning": "0.3.1",
+    "@inco/js": "0.3.1"
   }
 }

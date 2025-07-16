@@ -55,17 +55,17 @@ export function runE2ETest(valueToAdd: number, zap: Lightning, cfg: E2EConfig) {
     let dappAddress: Address;
 
     beforeAll(async () => {
-      console.warn('###############################################');
-      console.warn(`# Step 0. Deploy the AddTwo contract`);
-      console.warn('###############################################');
-      dappAddress = await deployAddTwo(cfg);
-      console.warn(`AddTwo contract deployed at ${dappAddress}`);
       console.warn('Running this test has some prerequisites:');
       console.warn(`- The IncoLite contract ${zap.executorAddress} must be deployed on ${cfg.chain.name}`);
       console.warn(`- The dapp contract ${dappAddress} must be deployed on ${cfg.chain.name}`);
       console.warn(
         `- The sender ${privateKeyToAccount(cfg.senderPrivKey).address} must have some ${cfg.chain.name} tokens`,
       );
+      console.warn('###############################################');
+      console.warn(`# Step 0. Deploy the AddTwo contract`);
+      console.warn('###############################################');
+      dappAddress = await deployAddTwo(cfg);
+      console.warn(`AddTwo contract deployed at ${dappAddress}`);
 
       // Step 1.
       const inputCt = await zap.encrypt(valueToAdd, {
