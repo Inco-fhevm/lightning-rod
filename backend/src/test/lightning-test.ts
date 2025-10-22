@@ -1,5 +1,5 @@
 import { HexString, parseAddress } from '@inco/js';
-import { incoLightningAbi } from '@inco/js/abis';
+import { incoLightningAbi } from '@inco/js/abis/lightning';
 import { Lightning } from '@inco/js/lite';
 import {
   type Account,
@@ -10,6 +10,7 @@ import {
   getContract,
   type Hex,
   http,
+  parseEther,
   type PublicClient,
   type Transport,
   type WalletClient,
@@ -84,10 +85,6 @@ export function runE2ETest(valueToAdd: number, zap: Lightning, cfg: E2EConfig) {
       if (!incoLite) {
         throw new Error(`IncoLite contract not found at address ${zap.executorAddress}`);
       }
-      callbackFulfillPromise = new Promise((resolve) => {
-        incoLite.watchEvent.RequestFulfilled({ requestId }, { onLogs: () => resolve() });
-      });
-
       // Step 2.
       const res = await addTwo(dappAddress, inputCt, walletClient, publicClient, cfg);
       resultHandle = res.resultHandle;
@@ -97,7 +94,7 @@ export function runE2ETest(valueToAdd: number, zap: Lightning, cfg: E2EConfig) {
     it('should read from the decrypted message', async () => {
       console.log();
       console.log(`Waiting for RequestFulfilled event with requestId ${requestId}...`);
-      await callbackFulfillPromise;
+      await zap.attestedDecrypt();
       console.log('RequestFulfilled event received');
 
       const dapp = getContract({
@@ -170,6 +167,7 @@ async function addTwo(
 async function deployAddTwo(cfg: E2EConfig): Promise<Address> {
   console.log();
   console.log(`Deploying AddTwo.sol contract ...`);
+  await fundAccount(cfg.senderPrivKey, cfg.chain, cfg.hostChainRpcUrl);
   const account = privateKeyToAccount(cfg.senderPrivKey);
   const walletClient = createWalletClient({
     chain: cfg.chain,
@@ -199,4 +197,18 @@ async function deployAddTwo(cfg: E2EConfig): Promise<Address> {
 
 function prettifyInputCt(hex: HexString): string {
   return `${hex.slice(0, 8)}...${hex.slice(-6)}`;
+}
+
+async function fundAccount(senderPrivKey: Hex, chain: Chain, hostChainRpcUrl: string) {
+  const richAccount = privateKeyToAccount("0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80");
+  const account = privateKeyToAccount(senderPrivKey);
+  const richWalletClient = createWalletClient({
+    chain,
+    transport: http(hostChainRpcUrl),
+  });
+  await richWalletClient.sendTransaction({
+    account: richAccount,
+    to: account.address,
+    value: parseEther('1')
+  });
 }

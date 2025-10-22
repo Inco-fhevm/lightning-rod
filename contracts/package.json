@@ -2,7 +2,7 @@
   "name": "lightning-rod-contracts",
   "private": true,
   "dependencies": {
-    "@inco/lightning": "^0.1.21",
+    "@inco/lightning": "^0.6.1",
     "@inco/shared": "^0.1.0",
     "@openzeppelin/contracts": "^5.3.0",
     "ds-test": "https://github.com/dapphub/ds-test",

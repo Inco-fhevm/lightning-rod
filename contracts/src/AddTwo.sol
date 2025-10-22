@@ -25,24 +25,10 @@ contract AddTwo {
     // with an encrypted input.
     function addTwoEOA(
         bytes memory uint256EInput
-    ) external returns (uint256, euint256) {
+    ) external returns (euint256 result) {
         euint256 value = uint256EInput.newEuint256(msg.sender);
         euint256 result = this.addTwo(value);
         e.allow(result, address(this));
         e.allow(result, msg.sender);
-        uint256 requestId = e.requestDecryption(
-            result,
-            this.callback.selector,
-            ""
-        );
-        return (requestId, result);
-    }
-
-    function callback(
-        uint256 /* requestId */,
-        uint256 result,
-        bytes memory /* data */
-    ) external {
-        lastResult = result;
     }
 }
