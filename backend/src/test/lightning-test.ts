@@ -66,16 +66,16 @@ export function runE2ETest(valueToAdd: number, zap: Lightning, cfg: E2EConfig) {
       console.warn(
         `- The sender ${privateKeyToAccount(cfg.senderPrivKey).address} must have some ${cfg.chain.name} tokens`,
       );
-    },100_000);
+    }, 100_000);
 
     it.only('should read from the decrypted message', async () => {
       const inputCt = await zap.encrypt(valueToAdd, {
         accountAddress: walletClient.account.address,
         dappAddress,
       });
-      const {resultHandle} = await addTwo(dappAddress, inputCt, walletClient, publicClient, cfg);
+      const { resultHandle } = await addTwo(dappAddress, inputCt, walletClient, publicClient, cfg);
       console.log(`Result handle: ${resultHandle}`);
-      const decrypted = await zap.attestedDecrypt(walletClient,[resultHandle]);
+      const decrypted = await zap.attestedDecrypt(walletClient, [resultHandle]);
       const result = decrypted[0]?.plaintext?.value;
       console.log(`Result:`, result);
       expect(result).toBe(BigInt(valueToAdd + 2));
@@ -117,7 +117,7 @@ async function addTwo(
   console.log(`Simulating the call to add 2 to ${prettifyInputCt(inputCt)}`);
   const {
     result: resultHandle,
-  } = await dapp.simulate.addTwoEOA([inputCt], { value: parseEther('0.01') });
+  } = await dapp.simulate.addTwoEOA([inputCt], { value: parseEther('0.001') });
 
   if (!resultHandle) {
     throw new Error('Failed to get resultHandle from simulation');
@@ -129,7 +129,7 @@ async function addTwo(
   // With some testing, we found that 300000 gas is enough for this tx.
   // ref: https://testnet.monadexplorer.com/tx/0x562e301221c942c50c758076d67bef85c41cd51def9d8f4ad2d514aa8ab5f74d
   // ref: https://sepolia.basescan.org/tx/0x9141788e279a80571b0b5fcf203a7dc6599b6a3ad14fd3353e51089dc3c870a6
-  const txHash = await dapp.write.addTwoEOA([inputCt], { gas: BigInt(300000) });
+  const txHash = await dapp.write.addTwoEOA([inputCt], { gas: BigInt(300000), value: parseEther('0.001') });
   console.log(`Tx submitted: ${chain.blockExplorers?.default.url ?? 'no-explorer'}/tx/${txHash}`);
 
   console.log();
