@@ -459,6 +459,27 @@ export const libTestAbi = [
   },
   {
     type: 'function',
+    inputs: [{ name: 'a', internalType: 'eaddress', type: 'bytes32' }],
+    name: 'testRevealEAddress',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'a', internalType: 'ebool', type: 'bytes32' }],
+    name: 'testRevealEBool',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'a', internalType: 'euint256', type: 'bytes32' }],
+    name: 'testRevealEUint',
+    outputs: [],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
     inputs: [
       { name: 'a', internalType: 'euint256', type: 'bytes32' },
       { name: 'b', internalType: 'euint256', type: 'bytes32' },

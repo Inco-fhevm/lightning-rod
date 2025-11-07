@@ -1,6 +1,7 @@
-import { HexString, parseAddress } from '@inco/js';
+import { handleTypes, HexString, parseAddress } from '@inco/js';
 import { incoLightningAbi } from '@inco/js/abis/lightning';
 import { incoVerifierAbi } from '@inco/js/abis/verifier';
+import { encryptionSchemes } from '@inco/js/encryption';
 import { Lightning } from '@inco/js/lite';
 import {
   type Account,
@@ -265,13 +266,14 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig) {
 
   describe('Lightning LibTest E2E', () => {
     let libTestAddress: Address;
-    let encryptor: any;
+    let encryptor: ReturnType<Lightning['getEncryptor']>;
     let libTest: any;
     let handleA: HexString;
     let handleB: HexString;
     let handleC: HexString;
     let handleTrue: HexString;
     let handleFalse: HexString;
+    let handleAddress: HexString;
 
     beforeAll(async () => {
       console.warn('###############################################');
@@ -344,6 +346,31 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig) {
         return handleSim.result as HexString;
       }
 
+      // Helper function to create eaddress handle
+      async function createEaddressHandle(address: Address): Promise<HexString> {
+        const plaintext = {
+          scheme: encryptionSchemes.ecies,
+          type: handleTypes.euint160,
+          value: BigInt(address), // BigInt can parse hex strings directly, preserving precision
+        } as any;
+        const ct = await encryptor({
+          plaintext: plaintext,
+          context: {
+            hostChainId: BigInt(cfg.chain.id),
+            aclAddress: zap.executorAddress,
+            userAddress: walletClient.account.address,
+            contractAddress: libTestAddress,
+          },
+        });
+        const handleSim = await libTest.simulate.testNewEaddress([ct.ciphertext.value, walletClient.account.address], {
+          value: parseEther('0.0001'),
+        });
+        await libTest.write.testNewEaddress([ct.ciphertext.value, walletClient.account.address], {
+          value: parseEther('0.0001'),
+        });
+        return handleSim.result as HexString;
+      }
+
       // Create 3 numeric handles and 2 boolean handles
       console.warn('Creating handles in beforeAll...');
       handleA = await createEuint256Handle(10);
@@ -351,6 +378,7 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig) {
       handleC = await createEuint256Handle(15);
       handleTrue = await createEboolHandle(true);
       handleFalse = await createEboolHandle(false);
+      handleAddress = await createEaddressHandle(walletClient.account.address);
       console.warn('All handles created successfully');
     }, 100_000);
 
@@ -639,6 +667,37 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig) {
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [sim.result]);
         const value = decryptedArr[0]?.plaintext.value;
         expect(value).toBeDefined();
+      }, 20_000);
+    });
+    describe('Reveal Operations', () => {
+      it('should test reveal uint256', async () => {
+        const sim = await libTest.simulate.testRevealEUint([handleA]);
+        const txHash = await libTest.write.testRevealEUint([handleA]);
+        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        const decryptedArr = await zap.attestedDecrypt(walletClient as any, [handleA]);
+        const value = decryptedArr[0]?.plaintext.value;
+        expect(value).toBe(BigInt(10));
+      }, 20_000);
+      it('should test reveal bool', async () => {
+        const sim = await libTest.simulate.testRevealEBool([handleTrue]);
+        const txHash = await libTest.write.testRevealEBool([handleTrue]);
+        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        const decryptedArr = await zap.attestedDecrypt(walletClient as any, [handleTrue]);
+        const value = decryptedArr[0]?.plaintext.value;
+        expect(value).toBe(true);
+      }, 20_000);
+      it('should test reveal address', async () => {
+        // Note: sim.result is undefined because testRevealEAddress returns void (no outputs)
+        // The reveal function just reveals the value on-chain but doesn't return a handle
+        const sim = await libTest.simulate.testRevealEAddress([handleAddress]);
+        const txHash = await libTest.write.testRevealEAddress([handleAddress]);
+        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        // After revealing, we decrypt the original handle to verify the value
+        const decryptedArr = await zap.attestedDecrypt(walletClient as any, [handleAddress]);
+        const value = decryptedArr[0]?.plaintext.value;
+        // Convert address to BigInt - use the same conversion as in createEaddressHandle
+        const expectedAddressValue = BigInt(walletClient.account.address);
+        expect(value).toBe(expectedAddressValue);
       }, 20_000);
     });
   });

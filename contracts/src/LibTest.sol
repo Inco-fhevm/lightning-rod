@@ -434,15 +434,15 @@ contract LibTest {
 
     // ============ REVEAL OPERATIONS ============
 
-    // function testRevealUint(euint256 a) external {
-    //     e.reveal(a);
-    // }
+    function testRevealEUint(euint256 a) external {
+        e.reveal(a);
+    }
 
-    // function testRevealBool(ebool a) external {
-    //     e.reveal(a);
-    // }
+    function testRevealEBool(ebool a) external {
+        e.reveal(a);
+    }
 
-    // function testRevealAddress(eaddress a) external {
-    //     e.reveal(a);
-    // }
+    function testRevealEAddress(eaddress a) external {
+        e.reveal(a);
+    }
 }
