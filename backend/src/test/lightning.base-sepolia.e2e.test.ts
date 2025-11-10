@@ -12,7 +12,7 @@ describe(`Lightning Base Sepolia E2E`, { timeout: 50_000 }, async () => {
   const hostChainRpcUrl = getEnv('BASE_SEPOLIA_RPC_URL');
   const chain = baseSepolia;
   const zap = await Lightning.latest('testnet', chain.id);
-  runE2ETest(Math.floor(Math.random() * 100), zap, {
+  runE2ETest(zap, {
     chain,
     senderPrivKey,
     hostChainRpcUrl,

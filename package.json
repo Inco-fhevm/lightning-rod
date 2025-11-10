@@ -25,7 +25,7 @@
     "typescript": "^5.8.3"
   },
   "overrides": {
-    "@inco/lightning": "0.6.8",
+    "@inco/lightning": "0.6.9",
     "@inco/js": "0.6.9",
     "ansi-styles": "^6.2.3",
     "is-core-module": "2.13.1",
