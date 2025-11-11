@@ -2,14 +2,12 @@
 pragma solidity ^0.8;
 
 import {euint256, ebool, e} from "@inco/lightning/src/Lib.sol";
+import {Fee} from "@inco/lightning/src/lightning-parts/Fee.sol";
 
-contract AddTwo {
+contract AddTwo is Fee {
     using e for euint256;
     using e for uint256;
     using e for bytes;
-
-    // Stores the result of the last callback.
-    uint256 public lastResult;
 
     function addTwo(euint256 a) external returns (euint256) {
         uint256 two = 2;
@@ -23,26 +21,11 @@ contract AddTwo {
 
     // addTwoEOA is the equivalent of addTwo, but it allows an EOA to call it
     // with an encrypted input.
-    function addTwoEOA(
-        bytes memory uint256EInput
-    ) external returns (uint256, euint256) {
-        euint256 value = uint256EInput.newEuint256(msg.sender);
+    function addTwoEOA(bytes memory uint256EInput) external payable refundUnspent returns (euint256 result) {
+        euint256 value = e.newEuint256(uint256EInput, msg.sender);
         euint256 result = this.addTwo(value);
         e.allow(result, address(this));
         e.allow(result, msg.sender);
-        uint256 requestId = e.requestDecryption(
-            result,
-            this.callback.selector,
-            ""
-        );
-        return (requestId, result);
-    }
-
-    function callback(
-        uint256 /* requestId */,
-        uint256 result,
-        bytes memory /* data */
-    ) external {
-        lastResult = result;
+        return result;
     }
 }
