@@ -22,16 +22,5 @@ jobs:
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
 
-      - name: Install deps (root)
-        run: bun install
-
-      - name: Compile contracts
-        working-directory: contracts
-        run: forge compile
-
-      - name: Start services
-        run: docker compose up --detach
-
-      - name: Run e2e tests
-        working-directory: backend
-        run: bun test:e2e
+      - run: bun install
+      - run: bun run test
