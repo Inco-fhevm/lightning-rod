@@ -5,3 +5,6 @@ allow_paths = ['../']
 evm_version = 'cancun'
 solc = '0.8.28'
 optimizer = true
+
+[lint]
+lint_on_build = false
