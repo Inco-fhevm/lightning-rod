@@ -25,10 +25,6 @@ jobs:
       - name: Install deps (root)
         run: bun install
 
-      - name: Install deps (contracts)
-        working-directory: contracts
-        run: bun install
-
       - name: Compile contracts
         working-directory: contracts
         run: forge compile
