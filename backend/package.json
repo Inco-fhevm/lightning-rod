@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "test:e2e": "bun vitest run src/test/lightning.local.e2e.test.ts",
-    "test:ui": "bun vitest run src/test/react-example/tests/HW.spec.tsx",
+    "test:ui": "bun vitest run src/test/react-example/tests/Inco.spec.tsx",
     "test:tsc": "tsc --noEmit",
     "generate:abis": "bun wagmi generate"
   },
