@@ -10,6 +10,7 @@
     // Bundler mode
     "allowImportingTsExtensions": true,
     "noEmit": true,
+    "jsx": "react-jsx",
 
     // Best practices
     "strict": true,
