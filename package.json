@@ -12,7 +12,7 @@
     "test:setup": "docker compose up --detach && pushd contracts && forge compile && popd",
     "test:e2e": "bun test:setup && pushd backend && bun test:e2e && popd",
     "test:frontend:build": "bun test:setup && pushd backend && bun test:frontend:build && popd",
-    "test": "bun test:setup && bun test:e2e",
+    "test": "bun test:setup && bun test:e2e && bun test:frontend:build",
     "lint": "bun prettier --check .",
     "lint:fix": "bun prettier --write ."
   },
