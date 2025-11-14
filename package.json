@@ -11,7 +11,7 @@
   "scripts": {
     "test:setup": "docker compose up --detach && pushd contracts && forge compile && popd",
     "test:e2e": "bun test:setup && pushd backend && bun test:e2e && popd",
-    "test:ui": "bun test:setup && pushd backend && bun test:ui && popd",
+    "test:frontend:build": "bun test:setup && pushd backend && bun test:frontend:build && popd",
     "test": "bun test:setup && bun test:e2e",
     "lint": "bun prettier --check .",
     "lint:fix": "bun prettier --write ."
@@ -20,7 +20,11 @@
     "@inco/lightning": "workspace:*",
     "@types/bun": "latest",
     "prettier": "^3.5.3",
-    "prettier-plugin-organize-imports": "^4.1.0"
+    "prettier-plugin-organize-imports": "^4.1.0",
+    "ts-loader": "^9.5.4",
+    "vitest": "^4.0.8",
+    "webpack": "^5.102.1",
+    "webpack-cli": "^6.0.1"
   },
   "peerDependencies": {
     "typescript": "^5.8.3"

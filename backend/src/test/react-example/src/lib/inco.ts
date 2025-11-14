@@ -52,14 +52,13 @@ export const encrypt = async (
   });
   const eciesKey = await incoVerifier.read.eciesPubkey();
   console.log(`Ecies key:`, eciesKey);
-  const encryptor = lightning.getEncryptor(eciesKey);
+  // const encryptor = lightning.getEncryptor(eciesKey);
   const ciphertext = await lightning.encrypt(
     value,
     {
       accountAddress: walletClient.account.address,
       dappAddress: incoVerifierAddress,
-    },
-    encryptor,
+    }
   );
   console.log(`Ciphertext: ${ciphertext}`);
   return ciphertext;

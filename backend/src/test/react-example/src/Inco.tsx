@@ -24,6 +24,7 @@ export default function IncoTest({
   const handleCiphertextCreate = async () => {
     setIsEncrypting(true)
     try {
+      // const zap = await Lightning.localNode('alphanet');
       const incoLite = await createIncoLite(chain, pepper)
       const encryptedValue = await encrypt(
         incoLite,
