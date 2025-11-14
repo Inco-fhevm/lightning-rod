@@ -8,7 +8,7 @@
     "test": "react-scripts test"
   },
   "dependencies": {
-    "@inco/js": "latest",
+    "@inco/js": "workspace:*",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-scripts": "5.0.1",
