@@ -18,7 +18,6 @@ export const encrypt = async (
   value: bigint | boolean,
   addTwoAddress: Address,
 ) => {
-  console.log(`Private key: ${privateKey}`);
   let privateKeyHex: Hex;
   if (chain === anvil) {
     const zap = await Lightning.localNode('alphanet');
@@ -61,8 +60,6 @@ export const encrypt = async (
     },
     encryptor,
   );
-  console.log(`Ciphertext:`);
-  console.log(`Ciphertext: ${ciphertext}`);
   return ciphertext;
 };
 

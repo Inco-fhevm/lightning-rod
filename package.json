@@ -6,7 +6,8 @@
   "module": "index.ts",
   "workspaces": [
     "backend",
-    "contracts"
+    "contracts",
+    "backend/src/test/react-example"
   ],
   "scripts": {
     "test:setup": "docker compose up --detach && pushd contracts && forge compile && popd",

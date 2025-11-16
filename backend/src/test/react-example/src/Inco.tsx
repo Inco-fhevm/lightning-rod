@@ -57,20 +57,16 @@ export default function IncoTest({
   }
   
   const handleCiphertextSubmit = useCallback(async (ciphertext: Hex) => {
-    console.log(`Submitting ciphertext: ${ciphertext}`);
-    console.log(`Private key: ${privateKey}`);
     const account = privateKeyToAccount(privateKey);
     const viemChain = defineChain({
       ...chain,
       fees: { maxPriorityFeePerGas: parseGwei('10') },
     });
-    console.log(`Creating wallet client for chain: ${viemChain.name}`);
     const walletClient = createWalletClient({
       chain: viemChain,
       transport: http(hostChainRpcUrl),
       account,
     });
-    console.log(`Creating public client for chain: ${viemChain.name}`);
     const publicClient = createPublicClient({
       chain: viemChain,
       transport: http(hostChainRpcUrl),
@@ -80,8 +76,6 @@ export default function IncoTest({
       address: addTwoAddress,
       client: walletClient,
     });
-    console.log(`Dapp address: ${dapp.address}`);
-    console.log(`Simulating the call to add 2 to ${ciphertext}`);
     let simResultHandle: Hex;
     try {
       const { result: resultHandle } = await dapp.simulate.addTwoEOA([ciphertext], { value: parseEther('0.01') });
