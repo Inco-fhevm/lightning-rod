@@ -25,8 +25,6 @@
     "@wagmi/cli": "^2.2.1",
     "happy-dom": "^20.0.10",
     "playwright": "^1.56.1",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
     "typescript": "~5.8.3",
     "vitest": "^4.0.8",
     "vitest-browser-react": "^2.0.2"
