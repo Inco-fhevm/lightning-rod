@@ -45,7 +45,7 @@
     "contracts": {
       "name": "lightning-rod-contracts",
       "dependencies": {
-        "@inco/lightning": "0.6.8",
+        "@inco/lightning": "workspace:*",
         "@openzeppelin/contracts": "^5.3.0",
         "ds-test": "https://github.com/dapphub/ds-test",
         "forge-std": "https://github.com/foundry-rs/forge-std",
@@ -53,8 +53,8 @@
     },
   },
   "overrides": {
-    "@inco/js": "0.6.9",
-    "@inco/lightning": "0.6.9",
+    "@inco/js": "latest",
+    "@inco/lightning": "latest",
     "ansi-regex": "^6.2.2",
     "ansi-styles": "^6.2.3",
     "backslash": "^0.2.0",
