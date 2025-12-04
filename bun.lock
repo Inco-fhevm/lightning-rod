@@ -501,7 +501,7 @@
 
     "@inco/js": ["@inco/js@0.6.9", "", { "dependencies": { "@bufbuild/protobuf": "^2.2.3", "@connectrpc/connect": "^2.0.0", "@connectrpc/connect-node": "^2.0.0", "@connectrpc/connect-web": "^2.0.1", "@grpc/grpc-js": "^1.13.4", "@types/elliptic": "^6.4.18", "ecies-geth": "^1.7.5", "effect": "^3.17.13", "elliptic": "^6.6.1", "sha3": "^2.1.4", "viem": "^2.23.6" } }, "sha512-AGKLXH8V2Co3wI+wnXBwpDk/mcIRyRsGrtVUgYvyWuCtM+vKNRMNvR3+W0q7EhuqBs/y/47DrODpNCF417MgBA=="],
 
-    "@inco/lightning": ["@inco/lightning@0.6.9", "", { "dependencies": { "@inco/shared": "^0.1.0", "@openzeppelin/contracts": "^5.2.0", "@openzeppelin/contracts-upgradeable": "^5.2.0", "@safe-global/safe-smart-account": "https://github.com/safe-global/safe-smart-account.git#v1.5.0", "ds-test": "https://github.com/dapphub/ds-test", "forge-std": "https://github.com/foundry-rs/forge-std", "tsx": "^4.19.3" } }, "sha512-AWeFIbaJNXoKIWa/TUjOzQqGcTwCmLgeHjU5F7KH5O4u0ecar4+xAEmYvlRgPmidIkP+vPdSX2KFpKMw/w9oaA=="],
+    "@inco/lightning": ["@inco/lightning@0.7.0", "", { "dependencies": { "@inco/shared": "^0.1.0", "@openzeppelin/contracts": "^5.2.0", "@openzeppelin/contracts-upgradeable": "^5.2.0", "@safe-global/safe-smart-account": "https://github.com/safe-global/safe-smart-account.git#v1.5.0", "ds-test": "https://github.com/dapphub/ds-test", "forge-std": "https://github.com/foundry-rs/forge-std", "tsx": "^4.19.3" } }, "sha512-k8f9dCPIGgSk3eqlio3AO5wKrChrGPfa2pDHW9gKCi3epIqp4Rq1KoqrcQajkZGqpdde3wkt3Oi+sfdgtKr2+Q=="],
 
     "@inco/lightning-rod-test": ["@inco/lightning-rod-test@workspace:backend"],
 
