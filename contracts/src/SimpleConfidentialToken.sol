@@ -2,7 +2,7 @@
 pragma solidity ^0.8;
 
 // This line of import is all you need to get started with Inco
-import {euint256, ebool, e} from "@inco/lightning/src/Lib.sol";
+import {euint256, ebool, e, inco} from "@inco/lightning/src/Lib.sol";
 
 /// @notice a fungible token whose balances and transfer values are confidential
 contract SimpleConfidentialToken {
@@ -27,7 +27,8 @@ contract SimpleConfidentialToken {
 
     // this function is meant to be called by EOAs or smart wallets as valueInput is an encrypted amount that should
     // be generated using @inco/js sdk
-    function transfer(address to, bytes memory valueInput) external returns (ebool) {
+    function transfer(address to, bytes memory valueInput) external payable returns (ebool) {
+        require(msg.value == inco.getFee(),"Fee not paid");
         // `newInput` returns an euint256 from an encrypted input, if the encrypted input is malformed, it will return
         // an euint256 with a value of 0. Depending on how malformed the input is, an external observer may know
         // that the fallback 0 value has been returned. Just use the js sdk to avoid that.
