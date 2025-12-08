@@ -27,7 +27,7 @@
     "contracts": {
       "name": "lightning-rod-contracts",
       "dependencies": {
-        "@inco/lightning": "0.6.8",
+        "@inco/lightning": "latest",
         "@openzeppelin/contracts": "^5.3.0",
         "ds-test": "https://github.com/dapphub/ds-test",
         "forge-std": "https://github.com/foundry-rs/forge-std",
@@ -458,6 +458,10 @@
     "yargs-parser": ["yargs-parser@21.1.1", "", {}, "sha512-tVpsJW7DdjecAiFpbIB1e3qxIQsE6NoPc5/eTdrbbIC4h0LVsWhnoa3g+m2HclBIujHzsxZ4VJVA+GUuc2/LBw=="],
 
     "zod": ["zod@4.1.12", "", {}, "sha512-JInaHOamG8pt5+Ey8kGmdcAcg3OL9reK8ltczgHTAwNhMys/6ThXHityHxVV2p3fkw/c+MAvBHFVYHFZDmjMCQ=="],
+
+    "@inco/lightning/ds-test": ["ds-test@github:dapphub/ds-test#e282159", {}, "dapphub-ds-test-e282159"],
+
+    "@inco/lightning/forge-std": ["forge-std@github:foundry-rs/forge-std#799589b", {}, "foundry-rs-forge-std-799589b"],
 
     "@inco/shared/ds-test": ["ds-test@github:dapphub/ds-test#e282159", {}, "dapphub-ds-test-e282159"],
 
