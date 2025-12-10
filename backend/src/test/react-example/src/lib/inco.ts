@@ -1,6 +1,7 @@
 import { incoLightningAbi } from '@inco/js/abis/lightning';
 import { incoVerifierAbi } from '@inco/js/abis/verifier';
 import { Lightning } from '@inco/js/lite';
+import { handleTypes } from '@inco/js';
 import { Chain, createPublicClient, createWalletClient, defineChain, getContract, Hex, http, parseGwei } from 'viem';
 import { Address, privateKeyToAccount } from 'viem/accounts';
 import { anvil } from 'viem/chains';
@@ -50,15 +51,13 @@ export const encrypt = async (
     address: incoVerifierAddress,
     client: publicClient,
   });
-  const eciesKey = await incoVerifier.read.eciesPubkey();
-  const encryptor = lightning.getEncryptor(eciesKey);
   const ciphertext = await lightning.encrypt(
     value,
     {
       accountAddress: walletClient.account.address,
       dappAddress: addTwoAddress,
+      handleType: handleTypes.euint256,
     },
-    encryptor,
   );
   return ciphertext;
 };

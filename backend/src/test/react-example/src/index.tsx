@@ -12,6 +12,7 @@ root.render(
       privateKey="0x0"
       hostChainRpcUrl="http://localhost:8545"
       value={100n}
+      addTwoAddress="0x0"
     />
   </StrictMode>,
 )
