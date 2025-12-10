@@ -1,6 +1,8 @@
 [profile.default]
 src = 'src'
-test = 'src'
+test = 'src/test'
+test_match = '*.t.sol'
+no_match_path = 'src/LibTest.sol'
 allow_paths = ['../']
 evm_version = 'cancun'
 solc = '0.8.28'
