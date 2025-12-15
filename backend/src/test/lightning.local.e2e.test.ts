@@ -5,7 +5,7 @@ import { describe } from 'vitest';
 import { runE2ETest } from './lightning-test.js';
 
 describe(`Lightning Local Node E2E`, { timeout: 50_000 }, async () => {
-  const zap = await Lightning.localNode('alphanet');
+  const zap = await Lightning.localNode('devnet');
   runE2ETest(zap, {
     chain: anvil,
     senderPrivKey: zap.deployment.senderPrivateKey as Hex,

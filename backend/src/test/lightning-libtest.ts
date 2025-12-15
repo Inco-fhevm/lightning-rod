@@ -376,7 +376,7 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
 
     // Additional Bitwise Operations Tests
     describe('Additional Bitwise Operations', () => {
-      it.skip('should test rotation left with stored handles', async () => {
+      it('should test rotation left with stored handles', async () => {
         const sim = await libTest.simulate.testRotl([handleB, handleB]);
         const txHash = await libTest.write.testRotl([handleB, handleB]);
         await publicClient.waitForTransactionReceipt({ hash: txHash });
@@ -385,7 +385,7 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
         expect(value).toBe(BigInt(160));
       }, 20_000);
 
-      it.skip('should test rotation right with stored handles', async () => {
+      it('should test rotation right with stored handles', async () => {
         const sim = await libTest.simulate.testRotr([handleB, handleB]);
         const txHash = await libTest.write.testRotr([handleB, handleB]);
         await publicClient.waitForTransactionReceipt({ hash: txHash });
