@@ -21,7 +21,7 @@ export const encrypt = async (
 ) => {
   let privateKeyHex: Hex;
   if (chain === anvil) {
-    const zap = await Lightning.localNode('alphanet');
+    const zap = await Lightning.localNode('devnet');
     privateKeyHex = zap.deployment.senderPrivateKey as Hex;
   } else {
     privateKeyHex = privateKey;
