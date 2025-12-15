@@ -71,7 +71,6 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
 
   describe('Lightning LibTest E2E', () => {
     let libTestAddress: Address;
-    let encryptor: ReturnType<Lightning['getEncryptor']>;
     let libTest: any;
     let handleA: HexString;
     let handleB: HexString;
@@ -99,8 +98,6 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
         address: incoVerifierAddress,
         client: publicClient,
       });
-      const eciesKey = await incoVerifier.read.eciesPubkey();
-      encryptor = zap.getEncryptor(eciesKey);
 
       libTest = getContract({
         abi: libTestAbi,
@@ -115,8 +112,8 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
           {
             accountAddress: walletClient.account.address,
             dappAddress: libTestAddress,
+            handleType: handleTypes.euint256,
           },
-          encryptor,
         );
         const handleSim = await libTest.simulate.testNewEuint256([inputCt, walletClient.account.address], {
           value: parseEther('0.0001'),
@@ -134,8 +131,8 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
           {
             accountAddress: walletClient.account.address,
             dappAddress: libTestAddress,
+            handleType: handleTypes.ebool,
           },
-          encryptor,
         );
         const handleSim = await libTest.simulate.testNewEbool([inputCt, walletClient.account.address], {
           value: parseEther('0.0001'),
@@ -148,24 +145,18 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
 
       // Helper function to create eaddress handle
       async function createEaddressHandle(address: Address): Promise<HexString> {
-        const plaintext = {
-          scheme: encryptionSchemes.ecies,
-          type: handleTypes.euint160,
-          value: BigInt(address), // BigInt can parse hex strings directly, preserving precision
-        } as any;
-        const ct = await encryptor({
-          plaintext: plaintext,
-          context: {
-            hostChainId: BigInt(cfg.chain.id),
-            aclAddress: zap.executorAddress,
-            userAddress: walletClient.account.address,
-            contractAddress: libTestAddress,
+        const ct = await zap.encrypt(
+          BigInt(address),
+          {
+            accountAddress: walletClient.account.address,
+            dappAddress: libTestAddress,
+            handleType: handleTypes.euint160,
           },
-        });
-        const handleSim = await libTest.simulate.testNewEaddress([ct.ciphertext.value, walletClient.account.address], {
+        );
+        const handleSim = await libTest.simulate.testNewEaddress([ct, walletClient.account.address], {
           value: parseEther('0.0001'),
         });
-        await libTest.write.testNewEaddress([ct.ciphertext.value, walletClient.account.address], {
+        await libTest.write.testNewEaddress([ct, walletClient.account.address], {
           value: parseEther('0.0001'),
         });
         return handleSim.result as HexString;
@@ -385,7 +376,7 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
 
     // Additional Bitwise Operations Tests
     describe('Additional Bitwise Operations', () => {
-      it.skip('should test rotation left with stored handles', async () => {
+      it('should test rotation left with stored handles', async () => {
         const sim = await libTest.simulate.testRotl([handleB, handleB]);
         const txHash = await libTest.write.testRotl([handleB, handleB]);
         await publicClient.waitForTransactionReceipt({ hash: txHash });
@@ -394,7 +385,7 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
         expect(value).toBe(BigInt(160));
       }, 20_000);
 
-      it.skip('should test rotation right with stored handles', async () => {
+      it('should test rotation right with stored handles', async () => {
         const sim = await libTest.simulate.testRotr([handleB, handleB]);
         const txHash = await libTest.write.testRotr([handleB, handleB]);
         await publicClient.waitForTransactionReceipt({ hash: txHash });

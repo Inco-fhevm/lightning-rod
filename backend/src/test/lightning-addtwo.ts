@@ -20,6 +20,7 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import addTwoBuild from '../../../contracts/out/AddTwo.sol/AddTwo.json';
 import { addTwoAbi } from '../generated/abis.js';
 import { type E2EConfig, type E2EParams } from './lightning-test.js';
+import { handleTypes } from '@inco/js';
 
 export function runAddTwoE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EParams) {
   const { walletClient, publicClient, incoLite } = params;
@@ -49,16 +50,14 @@ export function runAddTwoE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EParam
         address: incoVerifierAddress,
         client: publicClient,
       });
-      const eciesKey = await incoVerifier.read.eciesPubkey();
-      const encryptor = zap.getEncryptor(eciesKey);
 
       const inputCt = await zap.encrypt(
         valueToAdd,
         {
           accountAddress: walletClient.account.address,
           dappAddress,
+          handleType: handleTypes.euint256,
         },
-        encryptor,
       );
       const { resultHandle } = await addTwo(dappAddress, inputCt, walletClient, publicClient, cfg);
       console.log(`Result handle: ${resultHandle}`);
@@ -73,7 +72,6 @@ export function runAddTwoE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EParam
       console.warn('###############################################');
       console.warn(`# Step 3. Reencrypt the result handle`);
       console.warn('###############################################');
-      console.warn(`# Using covalidator ${zap.covalidatorUrl}`);
       // const reencryptor = await zap.getReencryptor(walletClient);
       // const decrypted = await reencryptor({ handle: resultHandle });
       // expect(decrypted.value).toBe(BigInt(valueToAdd + 2));
@@ -161,7 +159,7 @@ function prettifyInputCt(hex: HexString): string {
   return `${hex.slice(0, 8)}...${hex.slice(-6)}`;
 }
 
-async function fundAccount(senderPrivKey: Hex, chain: Chain, hostChainRpcUrl: string) {
+export async function fundAccount(senderPrivKey: Hex, chain: Chain, hostChainRpcUrl: string) {
   const richAccount = privateKeyToAccount('0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80');
   const account = privateKeyToAccount(senderPrivKey);
   const richWalletClient = createWalletClient({

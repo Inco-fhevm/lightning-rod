@@ -1,17 +1,32 @@
 {
   "name": "@inco/lightning-rod-test",
   "license": "Apache-2.0",
+  "type": "module",
   "scripts": {
     "test:e2e": "bun vitest run src/test/lightning.local.e2e.test.ts",
+    "test:frontend:build": "bun vitest run src/test/build-validation.test.ts",
+    "test:frontend": "pushd src/test/react-example && bun run test && popd",
     "test:tsc": "tsc --noEmit",
     "generate:abis": "bun wagmi generate"
   },
   "dependencies": {
     "@inco/js": "workspace:*",
-    "viem": "^2.28.0"
+    "viem": "^2.28.0",
+    "webpack": "^5.102.1"
   },
   "devDependencies": {
-    "vitest": "^3.1.2",
-    "@wagmi/cli": "^2.2.1"
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "@vitejs/plugin-react": "^4.4.1",
+    "@vitest/browser-playwright": "^4.0.8",
+    "@vitest/ui": "^4.0.8",
+    "@wagmi/cli": "^2.2.1",
+    "happy-dom": "^20.0.10",
+    "playwright": "^1.56.1",
+    "typescript": "~5.8.3",
+    "vitest": "^4.0.8",
+    "vitest-browser-react": "^2.0.2"
   }
 }
