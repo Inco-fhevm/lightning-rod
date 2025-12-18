@@ -1,15 +1,18 @@
 // SPDX-License-Identifier: No License
 pragma solidity ^0.8;
 
-import {euint256, ebool, e,inco} from "@inco/lightning/src/Lib.devnet.sol";
+import {euint256, ebool, e, inco} from "@inco/lightning/src/Lib.devnet.sol";
 import {Fee} from "@inco/lightning/src/lightning-parts/Fee.sol";
 import {DecryptionAttestation} from "@inco/lightning/src/lightning-parts/DecryptionAttester.types.sol";
 import {asBool} from "@inco/lightning/src/shared/TypeUtils.sol";
+import "forge-std/console.sol";
 
 contract AddTwo is Fee {
     using e for euint256;
     using e for uint256;
     using e for bytes;
+
+    euint256 public resultHandle;
 
     function addTwo(euint256 a) external returns (euint256) {
         uint256 two = 2;
@@ -29,10 +32,23 @@ contract AddTwo is Fee {
         euint256 result = this.addTwo(value);
         e.allow(result, address(this));
         e.allow(result, msg.sender);
+        resultHandle = result;
         return result;
     }
 
-    function isValidDecryptionAttestation(DecryptionAttestation memory decryption, bytes[] memory signatures) external returns (bool) {
+    function checkAttestedCompute(
+        bytes memory ciphertext,
+        DecryptionAttestation memory decryption,
+        uint256 p
+    ) public payable returns (bool) {
+        console.logBytes32(ebool.unwrap(e.eq(resultHandle, p)));
+        return decryption.handle == ebool.unwrap(e.eq(resultHandle, p));
+    }
+
+    function isValidDecryptionAttestation(
+        DecryptionAttestation memory decryption,
+        bytes[] memory signatures
+    ) external returns (bool) {
         return inco.incoVerifier().isValidDecryptionAttestation(decryption, signatures);
     }
 }

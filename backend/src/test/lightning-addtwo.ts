@@ -1,6 +1,6 @@
-import { HexString, parseAddress } from '@inco/js';
+import { handleTypes, HexString, parseAddress } from '@inco/js';
 import { incoVerifierAbi } from '@inco/js/abis/verifier';
-import { Lightning } from '@inco/js/lite';
+import { AttestedComputeSupportedOps, Lightning } from '@inco/js/lite';
 import {
   type Account,
   type Address,
@@ -12,6 +12,7 @@ import {
   http,
   parseEther,
   type PublicClient,
+  toHex,
   type Transport,
   type WalletClient,
 } from 'viem';
@@ -20,9 +21,8 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import addTwoBuild from '../../../contracts/out/AddTwo.sol/AddTwo.json';
 import { addTwoAbi } from '../generated/abis.js';
 import { type E2EConfig, type E2EParams } from './lightning-test.js';
-import { handleTypes } from '@inco/js';
 
-export function runAddTwoE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EParams) {
+export function runAddTwoE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EParams) {
   const { walletClient, publicClient, incoLite } = params;
   const valueToAdd = Math.floor(Math.random() * 100);
 
@@ -43,7 +43,7 @@ export function runAddTwoE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EParam
       );
     }, 100_000);
 
-    it('should read from the decrypted message', async () => {
+    it.only('should read from the decrypted message', async () => {
       const incoVerifierAddress = await incoLite.read.incoVerifier();
       const incoVerifier = getContract({
         abi: incoVerifierAbi,
@@ -51,20 +51,55 @@ export function runAddTwoE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EParam
         client: publicClient,
       });
 
-      const inputCt = await zap.encrypt(
-        valueToAdd,
-        {
-          accountAddress: walletClient.account.address,
-          dappAddress,
-          handleType: handleTypes.euint256,
-        },
-      );
+      const inputCt = await zap.encrypt(valueToAdd, {
+        accountAddress: walletClient.account.address,
+        dappAddress,
+        handleType: handleTypes.euint256,
+      });
       const { resultHandle } = await addTwo(dappAddress, inputCt, walletClient, publicClient, cfg);
       console.log(`Result handle: ${resultHandle}`);
       const decrypted = await zap.attestedDecrypt(walletClient as any, [resultHandle]);
       const result = decrypted[0]?.plaintext?.value;
       console.log(`Result:`, result);
       expect(result).toBe(BigInt(valueToAdd + 2));
+
+      const newVal = await zap.encrypt(40n, {
+        accountAddress: walletClient.account.address,
+        dappAddress,
+        handleType: handleTypes.euint256,
+      });
+
+      const dapp = getContract({
+        abi: addTwoAbi,
+        address: dappAddress,
+        client: walletClient,
+      });
+
+      const x = await dapp.read.resultHandle();
+
+      const attestedCompute = await zap.attestedCompute(
+        walletClient,
+        x,
+        AttestedComputeSupportedOps.Eq,
+        BigInt(valueToAdd + 2),
+      );
+
+      console.log(`Attested compute result handle:`, attestedCompute);
+
+      const check = await dapp.simulate.checkAttestedCompute(
+        [
+          newVal,
+          {
+            handle: attestedCompute.handle,
+            value: toHex(attestedCompute.plaintext.value, { size: 32 }),
+          },
+          BigInt(valueToAdd + 2),
+        ],
+        {
+          value: parseEther('0.001'),
+        },
+      );
+      expect(check).toBe(true);
     }, 20_000);
 
     it('should reencrypt a message', async () => {

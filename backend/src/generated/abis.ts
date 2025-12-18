@@ -26,10 +26,54 @@ export const addTwoAbi = [
   },
   {
     type: 'function',
+    inputs: [
+      { name: 'ciphertext', internalType: 'bytes', type: 'bytes' },
+      {
+        name: 'decryption',
+        internalType: 'struct DecryptionAttestation',
+        type: 'tuple',
+        components: [
+          { name: 'handle', internalType: 'bytes32', type: 'bytes32' },
+          { name: 'value', internalType: 'bytes32', type: 'bytes32' },
+        ],
+      },
+      { name: 'p', internalType: 'uint256', type: 'uint256' },
+    ],
+    name: 'checkAttestedCompute',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'payable',
+  },
+  {
+    type: 'function',
     inputs: [],
     name: 'getFee',
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'pure',
+  },
+  {
+    type: 'function',
+    inputs: [
+      {
+        name: 'decryption',
+        internalType: 'struct DecryptionAttestation',
+        type: 'tuple',
+        components: [
+          { name: 'handle', internalType: 'bytes32', type: 'bytes32' },
+          { name: 'value', internalType: 'bytes32', type: 'bytes32' },
+        ],
+      },
+      { name: 'signatures', internalType: 'bytes[]', type: 'bytes[]' },
+    ],
+    name: 'isValidDecryptionAttestation',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'resultHandle',
+    outputs: [{ name: '', internalType: 'euint256', type: 'bytes32' }],
+    stateMutability: 'view',
   },
   { type: 'error', inputs: [], name: 'FeeNotPaid' },
 ] as const
@@ -641,7 +685,7 @@ export const simpleConfidentialTokenAbi = [
     ],
     name: 'transfer',
     outputs: [{ name: '', internalType: 'ebool', type: 'bytes32' }],
-    stateMutability: 'nonpayable',
+    stateMutability: 'payable',
   },
   {
     type: 'function',
