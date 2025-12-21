@@ -63,7 +63,7 @@ export function runAddTwoE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EPara
       console.log(`Result:`, result);
       expect(result).toBe(BigInt(valueToAdd + 2));
 
-      const newVal = await zap.encrypt(40n, {
+      const newVal = await zap.encrypt(BigInt(valueToAdd + 2), {
         accountAddress: walletClient.account.address,
         dappAddress,
         handleType: handleTypes.euint256,
@@ -99,7 +99,7 @@ export function runAddTwoE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EPara
           value: parseEther('0.001'),
         },
       );
-      expect(check).toBe(true);
+      expect(check.result).toBe(true);
     }, 20_000);
 
     it('should reencrypt a message', async () => {

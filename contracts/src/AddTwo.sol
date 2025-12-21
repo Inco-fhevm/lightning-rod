@@ -41,8 +41,9 @@ contract AddTwo is Fee {
         DecryptionAttestation memory decryption,
         uint256 p
     ) public payable returns (bool) {
-        console.logBytes32(ebool.unwrap(e.eq(resultHandle, p)));
-        return decryption.handle == ebool.unwrap(e.eq(resultHandle, p));
+        euint256 ct = e.newEuint256(ciphertext);
+        console.logBytes32(ebool.unwrap(e.eq(resultHandle, ct)));
+        return decryption.handle == ebool.unwrap(e.eq(resultHandle, ct));
     }
 
     function isValidDecryptionAttestation(
