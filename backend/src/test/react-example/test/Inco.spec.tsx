@@ -42,7 +42,7 @@ async function deployAddTwo(cfg: E2EConfig): Promise<Address> {
 }
 
 test('renders IncoTest', { timeout: 60000 }, async () => {
-  const zap = await Lightning.localNode('devnet');
+  const zap = await Lightning.localNode('testnet');
   const senderPrivKey = zap.deployment.senderPrivateKey as Hex;
   const cfg: E2EConfig = {
     senderPrivKey: senderPrivKey,
@@ -53,7 +53,7 @@ test('renders IncoTest', { timeout: 60000 }, async () => {
   const { unmount } = render(
     <IncoTest
       chain={anvil}
-      pepper="devnet"
+      pepper="testnet"
       privateKey={senderPrivKey}
       hostChainRpcUrl="http://localhost:8545"
       value={100n}

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: No License
 pragma solidity ^0.8;
 
-import {euint256, ebool, e,inco} from "@inco/lightning/src/Lib.devnet.sol";
+import {euint256, ebool, e,inco} from "@inco/lightning/src/Lib.sol";
 import {Fee} from "@inco/lightning/src/lightning-parts/Fee.sol";
 import {DecryptionAttestation} from "@inco/lightning/src/lightning-parts/DecryptionAttester.types.sol";
 import {asBool} from "@inco/lightning/src/shared/TypeUtils.sol";
