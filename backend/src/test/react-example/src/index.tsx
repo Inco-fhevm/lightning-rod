@@ -8,7 +8,7 @@ root.render(
   <StrictMode>
     <IncoTest
       chain={anvil}
-      pepper="devnet"
+      pepper="testnet"
       privateKey="0x0"
       hostChainRpcUrl="http://localhost:8545"
       value={100n}
