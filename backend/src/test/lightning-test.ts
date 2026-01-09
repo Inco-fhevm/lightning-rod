@@ -2,6 +2,7 @@ import { incoLightningAbi } from '@inco/js/abis/lightning';
 import { Transport, PublicClient, Address, type Chain, type Hex, Account, WalletClient, GetContractReturnType, getContract, http, parseGwei, createWalletClient, createPublicClient, defineChain } from 'viem';
 import { runAddTwoE2ETest } from './lightning-addtwo.js';
 import { runLibTestE2ETest } from './lightning-libtest.js';
+import { runElistTestE2ETest } from './lightning-elisttest.js';
 import { Lightning } from '@inco/js/lite';
 import { privateKeyToAccount } from 'viem/accounts';
 
@@ -62,4 +63,5 @@ export function runE2ETest(zap: Lightning, cfg: E2EConfig,) {
   const params: E2EParams = { walletClient, publicClient, incoLite };
   runAddTwoE2ETest(zap, cfg, params);
   runLibTestE2ETest(zap, cfg, params);
+  runElistTestE2ETest(zap, cfg, params);
 }

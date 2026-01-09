@@ -432,6 +432,10 @@ contract LibTest {
         return encryptedAddress;
     }
 
+    function testNewElist(bytes[] memory ciphertexts, ETypes listType, address user) external payable returns (elist) {
+        ePreview.newEList(ciphertexts,listType,user);
+    }
+
     // ============ REVEAL OPERATIONS ============
 
     function testRevealEUint(euint256 a) external {
