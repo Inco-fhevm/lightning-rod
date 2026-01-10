@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: No License
 pragma solidity ^0.8;
 
-import {ePreview,elist,ETypes,incoPreview} from "@inco/lightning-preview/src/Preview.Lib.sol";
+import {ePreview,elist,ETypes} from "@inco/lightning-preview/src/Preview.Lib.sol";
 import {euint256, ebool, eaddress, e, inco} from "@inco/lightning/src/Lib.sol";
 
 contract ElistTest {

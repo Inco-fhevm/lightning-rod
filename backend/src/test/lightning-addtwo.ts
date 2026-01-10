@@ -117,7 +117,7 @@ async function addTwo(
 
   console.log();
   console.log('Waiting for tx to be included in a block...');
-  const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
+  const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 2 });
   console.log(`Transaction included in block ${receipt.blockNumber}`);
 
   return { resultHandle: resultHandle as HexString };
@@ -127,7 +127,7 @@ async function addTwo(
 async function deployAddTwo(cfg: E2EConfig): Promise<Address> {
   console.log();
   console.log(`Deploying AddTwo.sol contract ...`);
-  await fundAccount(cfg.senderPrivKey, cfg.chain, cfg.hostChainRpcUrl);
+  // await fundAccount(cfg.senderPrivKey, cfg.chain, cfg.hostChainRpcUrl);
   const account = privateKeyToAccount(cfg.senderPrivKey);
   const walletClient = createWalletClient({
     chain: cfg.chain,
@@ -145,7 +145,7 @@ async function deployAddTwo(cfg: E2EConfig): Promise<Address> {
     chain: cfg.chain,
     transport: http(cfg.hostChainRpcUrl),
   });
-  const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
+  const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 2 });
 
   const contractAddress = receipt.contractAddress;
   if (!contractAddress) {

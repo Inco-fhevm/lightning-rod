@@ -24,7 +24,7 @@ import type { E2EParams } from './lightning-test.js';
 async function deployLibTest(cfg: E2EConfig): Promise<Address> {
   console.log();
   console.log(`Deploying LibTest.sol contract ...`);
-  await fundAccount(cfg.senderPrivKey, cfg.chain, cfg.hostChainRpcUrl);
+  // await fundAccount(cfg.senderPrivKey, cfg.chain, cfg.hostChainRpcUrl);
   const account = privateKeyToAccount(cfg.senderPrivKey);
   const walletClient = createWalletClient({
     chain: cfg.chain,
@@ -42,7 +42,7 @@ async function deployLibTest(cfg: E2EConfig): Promise<Address> {
     chain: cfg.chain,
     transport: http(cfg.hostChainRpcUrl),
   });
-  const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
+  const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 2});
 
   const contractAddress = receipt.contractAddress;
   if (!contractAddress) {
@@ -178,7 +178,7 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
       it('should test addition with stored handles', async () => {
         const sim = await libTest.simulate.testAdd([handleA, handleB]);
         const txHash = await libTest.write.testAdd([handleA, handleB]);
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 2});
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [sim.result]);
         const value = decryptedArr[0]?.plaintext.value;
         expect(value).toBe(BigInt(15));
@@ -188,7 +188,7 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
         const b = 3;
         const sim = await libTest.simulate.testAddScalar([handleA, BigInt(b)]);
         const txHash = await libTest.write.testAddScalar([handleA, BigInt(b)]);
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 2});
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [sim.result]);
         const value = decryptedArr[0]?.plaintext.value;
         expect(value).toBe(BigInt(13));
@@ -197,7 +197,7 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
       it('should test subtraction with stored handles', async () => {
         const sim = await libTest.simulate.testSub([handleA, handleB]);
         const txHash = await libTest.write.testSub([handleA, handleB]);
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 2});
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [sim.result]);
         const value = decryptedArr[0]?.plaintext.value;
         expect(value).toBe(BigInt(5));
@@ -206,7 +206,7 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
       it('should test multiplication with stored handles', async () => {
         const sim = await libTest.simulate.testMul([handleA, handleB]);
         const txHash = await libTest.write.testMul([handleA, handleB]);
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 2});
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [sim.result]);
         const value = decryptedArr[0]?.plaintext.value;
         expect(value).toBe(BigInt(50));
@@ -215,7 +215,7 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
       it('should test division with stored handles', async () => {
         const sim = await libTest.simulate.testDiv([handleA, handleB]);
         const txHash = await libTest.write.testDiv([handleA, handleB]);
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 2});
         const decryptedArr = await (zap as any).attestedDecrypt(walletClient as any, [sim.result]);
         const value = decryptedArr[0]?.plaintext.value;
         expect(value).toBe(BigInt(2));
@@ -224,7 +224,7 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
       it('should test remainder with stored handles', async () => {
         const sim = await libTest.simulate.testRem([handleA, handleB]);
         const txHash = await libTest.write.testRem([handleA, handleB]);
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 2});
         const decryptedArr = await (zap as any).attestedDecrypt(walletClient as any, [sim.result]);
         const value = decryptedArr?.[0]?.plaintext?.value ?? decryptedArr?.[0]?.value;
         expect(value).toBeDefined();
@@ -236,7 +236,7 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
       it('should test AND operation with stored handles', async () => {
         const sim = await libTest.simulate.testAnd([handleA, handleB]);
         const txHash = await libTest.write.testAnd([handleA, handleB]);
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 2});
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [sim.result]);
         const value = decryptedArr[0]?.plaintext.value;
         expect(value).toBe(BigInt(0));
@@ -245,7 +245,7 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
       it('should test OR operation with stored handles', async () => {
         const sim = await libTest.simulate.testOr([handleA, handleB]);
         const txHash = await libTest.write.testOr([handleA, handleB]);
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 2});
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [sim.result]);
         const value = decryptedArr[0]?.plaintext.value;
         expect(value).toBe(BigInt(15));
@@ -254,7 +254,7 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
       it('should test XOR operation with stored handles', async () => {
         const sim = await libTest.simulate.testXor([handleA, handleB]);
         const txHash = await libTest.write.testXor([handleA, handleB]);
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 2});
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [sim.result]);
         const value = decryptedArr[0]?.plaintext.value;
         expect(value).toBe(BigInt(15));
@@ -263,7 +263,7 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
       it('should test left shift with stored handles', async () => {
         const sim = await libTest.simulate.testShl([handleA, handleB]);
         const txHash = await libTest.write.testShl([handleA, handleB]);
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 2});
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [sim.result]);
         const value = decryptedArr[0]?.plaintext.value;
         expect(value).toBe(BigInt(320));
@@ -272,7 +272,7 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
       it('should test right shift with stored handles', async () => {
         const sim = await libTest.simulate.testShr([handleC, handleB]);
         const txHash = await libTest.write.testShr([handleC, handleB]);
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 2});
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [sim.result]);
         const value = decryptedArr[0]?.plaintext.value;
         expect(value).toBe(BigInt(0));
@@ -284,7 +284,7 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
       it('should test equality with stored handles', async () => {
         const sim = await libTest.simulate.testEq([handleC, handleC]);
         const txHash = await libTest.write.testEq([handleC, handleC]);
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 2});
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [sim.result]);
         const value = decryptedArr[0]?.plaintext.value;
         expect(value).toBe(true);
@@ -293,7 +293,7 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
       it('should test inequality with stored handles', async () => {
         const sim = await libTest.simulate.testNe([handleC, handleA]);
         const txHash = await libTest.write.testNe([handleC, handleA]);
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 2});
         const decryptedArr = await (zap as any).attestedDecrypt(walletClient as any, [sim.result]);
         const value = decryptedArr?.[0]?.plaintext?.value ?? decryptedArr?.[0]?.value;
         expect(value).toBe(true);
@@ -302,7 +302,7 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
       it('should test greater than with stored handles', async () => {
         const sim = await libTest.simulate.testGt([handleC, handleB]);
         const txHash = await libTest.write.testGt([handleC, handleB]);
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 2});
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [sim.result]);
         const value = decryptedArr[0]?.plaintext.value;
         expect(value).toBe(true);
@@ -311,7 +311,7 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
       it('should test less than with stored handles', async () => {
         const sim = await libTest.simulate.testLt([handleA, handleC]);
         const txHash = await libTest.write.testLt([handleA, handleC]);
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 2});
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [sim.result]);
         const value = decryptedArr[0]?.plaintext.value;
         expect(value).toBe(true);
@@ -320,7 +320,7 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
       it('should test min with stored handles', async () => {
         const sim = await libTest.simulate.testMin([handleC, handleA]);
         const txHash = await libTest.write.testMin([handleC, handleA]);
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 2});
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [sim.result]);
         const value = decryptedArr[0]?.plaintext.value;
         expect(value).toBe(BigInt(10));
@@ -329,7 +329,7 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
       it('should test max with stored handles', async () => {
         const sim = await libTest.simulate.testMax([handleC, handleA]);
         const txHash = await libTest.write.testMax([handleC, handleA]);
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 2});
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [sim.result]);
         const value = decryptedArr[0]?.plaintext.value;
         expect(value).toBe(BigInt(15));
@@ -341,7 +341,7 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
       it('should test NOT operation with stored boolean handle', async () => {
         const sim = await libTest.simulate.testNot([handleTrue]);
         const txHash = await libTest.write.testNot([handleTrue]);
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 2});
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [sim.result]);
         const value = decryptedArr[0]?.plaintext.value;
         expect(value).toBe(false); // false (NOT true)
@@ -353,7 +353,7 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
       it('should test random number generation', async () => {
         const sim = await libTest.simulate.testRand({ value: parseEther('0.0001') });
         const txHash = await libTest.write.testRand({ value: parseEther('0.0001') });
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 2});
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [sim.result]);
         const value = decryptedArr[0]?.plaintext.value;
         // Random number should be a valid uint256 (0 to 2^256-1)
@@ -365,7 +365,7 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
         const upperBound = 100;
         const sim = await libTest.simulate.testRandBounded([BigInt(upperBound)], { value: parseEther('0.0001') });
         const txHash = await libTest.write.testRandBounded([BigInt(upperBound)], { value: parseEther('0.0001') });
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 2});
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [sim.result]);
         const value = decryptedArr[0]?.plaintext.value;
         // Random number should be within bounds
@@ -379,7 +379,7 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
       it('should test rotation left with stored handles', async () => {
         const sim = await libTest.simulate.testRotl([handleB, handleB]);
         const txHash = await libTest.write.testRotl([handleB, handleB]);
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 2});
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [sim.result]);
         const value = decryptedArr[0]?.plaintext.value;
         expect(value).toBe(BigInt(160));
@@ -388,7 +388,7 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
       it('should test rotation right with stored handles', async () => {
         const sim = await libTest.simulate.testRotr([handleB, handleB]);
         const txHash = await libTest.write.testRotr([handleB, handleB]);
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 2});
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [sim.result]);
         const value = decryptedArr[0]?.plaintext.value;
         expect(value).toBe(18092513943330655534932966407607485602073435104006338131165247501236426506240n);
@@ -397,7 +397,7 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
       it('should test AND operation with stored boolean handles', async () => {
         const sim = await libTest.simulate.testAndBool([handleTrue, handleFalse]);
         const txHash = await libTest.write.testAndBool([handleTrue, handleFalse]);
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 2});
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [sim.result]);
         const value = decryptedArr[0]?.plaintext.value;
         expect(value).toBe(false); // false (true AND false)
@@ -406,7 +406,7 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
       it('should test OR operation with stored boolean handles', async () => {
         const sim = await libTest.simulate.testOrBool([handleTrue, handleFalse]);
         const txHash = await libTest.write.testOrBool([handleTrue, handleFalse]);
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 2});
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [sim.result]);
         const value = decryptedArr[0]?.plaintext.value;
         expect(value).toBe(true); // true (true OR false)
@@ -415,7 +415,7 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
       it('should test XOR operation with stored boolean handles', async () => {
         const sim = await libTest.simulate.testXorBool([handleTrue, handleTrue]);
         const txHash = await libTest.write.testXorBool([handleTrue, handleTrue]);
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 2});
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [sim.result]);
         const value = decryptedArr[0]?.plaintext.value;
         expect(value).toBe(false); // false (true XOR true)
@@ -427,7 +427,7 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
       it('should test greater than or equal with stored handles', async () => {
         const sim = await libTest.simulate.testGe([handleC, handleC]);
         const txHash = await libTest.write.testGe([handleC, handleC]);
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 2});
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [sim.result]);
         const value = decryptedArr[0]?.plaintext.value;
         expect(value).toBeDefined();
@@ -436,7 +436,7 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
       it('should test less than or equal with stored handles', async () => {
         const sim = await libTest.simulate.testLe([handleC, handleA]);
         const txHash = await libTest.write.testLe([handleC, handleA]);
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 2});
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [sim.result]);
         const value = decryptedArr[0]?.plaintext.value;
         expect(value).toBeDefined();
@@ -445,7 +445,7 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
       it('should test equality with scalar value', async () => {
         const sim = await libTest.simulate.testEqScalar([handleC, BigInt(15)]);
         const txHash = await libTest.write.testEqScalar([handleC, BigInt(15)]);
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 2});
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [sim.result]);
         const value = decryptedArr[0]?.plaintext.value;
         expect(value).toBeDefined();
@@ -454,7 +454,7 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
       it('should test inequality with scalar value', async () => {
         const sim = await libTest.simulate.testNeScalar([handleC, BigInt(20)]);
         const txHash = await libTest.write.testNeScalar([handleC, BigInt(20)]);
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 2});
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [sim.result]);
         const value = decryptedArr[0]?.plaintext.value;
         expect(value).toBeDefined();
@@ -464,7 +464,7 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
       it('should test reveal uint256', async () => {
         const sim = await libTest.simulate.testRevealEUint([handleA]);
         const txHash = await libTest.write.testRevealEUint([handleA]);
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 2});
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [handleA]);
         const value = decryptedArr[0]?.plaintext.value;
         expect(value).toBe(BigInt(10));
@@ -472,7 +472,7 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
       it('should test reveal bool', async () => {
         const sim = await libTest.simulate.testRevealEBool([handleTrue]);
         const txHash = await libTest.write.testRevealEBool([handleTrue]);
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 2});
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [handleTrue]);
         const value = decryptedArr[0]?.plaintext.value;
         expect(value).toBe(true);
@@ -482,7 +482,7 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
         // The reveal function just reveals the value on-chain but doesn't return a handle
         const sim = await libTest.simulate.testRevealEAddress([handleAddress]);
         const txHash = await libTest.write.testRevealEAddress([handleAddress]);
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 2});
         // After revealing, we decrypt the original handle to verify the value
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [handleAddress]);
         const value = decryptedArr[0]?.plaintext.value;

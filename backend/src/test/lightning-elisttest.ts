@@ -23,7 +23,7 @@ async function deployElistTest(cfg: E2EConfig): Promise<Address> {
   console.log();
   console.log(`Deploying ElistTest.sol contract ...`);
   // await fundAccount(cfg.senderPrivKey, cfg.chain, cfg.hostChainRpcUrl);
-  const account = privateKeyToAccount(`0x7cf73cff18de223ccfc1188c034f639768a90fd628393d0538fdb54d62b64695`);
+  const account = privateKeyToAccount(cfg.senderPrivKey);
   const walletClient = createWalletClient({
     chain: cfg.chain,
     transport: http(cfg.hostChainRpcUrl),
@@ -40,7 +40,7 @@ async function deployElistTest(cfg: E2EConfig): Promise<Address> {
     chain: cfg.chain,
     transport: http(cfg.hostChainRpcUrl),
   });
-  const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
+  const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 2 });
 
   const contractAddress = receipt.contractAddress;
   if (!contractAddress) {
@@ -60,7 +60,7 @@ async function fundAccount(senderPrivKey: Hex, chain: Chain, hostChainRpcUrl: st
   await richWalletClient.sendTransaction({
     account: richAccount,
     to: account.address,
-    value: parseEther('1'),
+    value: parseEther('100'), // Increased for large contract deployment
   });
 }
 
@@ -112,7 +112,7 @@ export function runElistTestE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EP
           [inputCts, handleTypes.euint256, walletClient.account.address],
           { value: parseEther('0.0003') },
         );
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash , confirmations: 2});
 
         expect(sim.result).toBeDefined();
         console.log('Created list handle:', sim.result);
@@ -121,7 +121,7 @@ export function runElistTestE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EP
       it('should get element from list at index', async () => {
         const sim = await elistTest.simulate.listGet([0]);
         const txHash = await elistTest.write.listGet([0]);
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash , confirmations: 2});
 
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [sim.result]);
         const value = decryptedArr[0]?.plaintext.value;
@@ -139,14 +139,14 @@ export function runElistTestE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EP
 
         const sim = await elistTest.simulate.listAppend([ct], { value: parseEther('0.0001') });
         const txHash = await elistTest.write.listAppend([ct], { value: parseEther('0.0001') });
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash , confirmations: 2});
 
         expect(sim.result).toBeDefined();
 
         // Verify the appended element
         const getSim = await elistTest.simulate.listGet([3]);
         const getTxHash = await elistTest.write.listGet([3]);
-        await publicClient.waitForTransactionReceipt({ hash: getTxHash });
+        await publicClient.waitForTransactionReceipt({ hash: getTxHash, confirmations: 2 });
 
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [getSim.result]);
         const value = decryptedArr[0]?.plaintext.value;
@@ -169,7 +169,7 @@ export function runElistTestE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EP
 
         const sim = await elistTest.simulate.listGetOr([ctIndex, ctDefault], { value: parseEther('0.0002') });
         const txHash = await elistTest.write.listGetOr([ctIndex, ctDefault], { value: parseEther('0.0002') });
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash , confirmations: 2});
 
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [sim.result]);
         const value = decryptedArr[0]?.plaintext.value;
@@ -194,10 +194,10 @@ export function runElistTestE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EP
           [listCts, handleTypes.euint256, walletClient.account.address],
           { value: parseEther('0.0003') },
         );
-        await publicClient.waitForTransactionReceipt({ hash: createTxHash });
+        await publicClient.waitForTransactionReceipt({ hash: createTxHash, confirmations: 2 });
 
         // Now set index 0 to 999
-        const ctIndex = await zap.encrypt(1, {
+        const ctIndex = await zap.encrypt(0, {
           accountAddress: walletClient.account.address,
           dappAddress: elistTestAddress,
           handleType: handleTypes.euint256,
@@ -210,17 +210,17 @@ export function runElistTestE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EP
 
         const sim = await elistTest.simulate.listSet([ctIndex, ctValue], { value: parseEther('0.0002') });
         const txHash = await elistTest.write.listSet([ctIndex, ctValue], { value: parseEther('0.0002') });
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash , confirmations: 2});
 
         await new Promise((resolve) => setTimeout(resolve, 5000)); // Wait for 5 seconds
         expect(sim.result).toBeDefined();
         // Verify the set element
-        const getSim = await elistTest.simulate.listGet([2]);
-        const getTxHash = await elistTest.write.listGet([2]);
-        await publicClient.waitForTransactionReceipt({ hash: getTxHash });
+        const getSim = await elistTest.simulate.listGet([0]);
+        const getTxHash = await elistTest.write.listGet([0]);
+        await publicClient.waitForTransactionReceipt({ hash: getTxHash, confirmations: 2 });
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [getSim.result]);
         const value = decryptedArr[0]?.plaintext.value;
-        expect(value).toBe(BigInt(333));
+        expect(value).toBe(BigInt(999));
       }, 90_000);
     });
 
@@ -239,7 +239,7 @@ export function runElistTestE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EP
 
         const sim = await elistTest.simulate.listInsert([ctIndex, ctValue], { value: parseEther('0.0002') });
         const txHash = await elistTest.write.listInsert([ctIndex, ctValue], { value: parseEther('0.0002') });
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash , confirmations: 2});
 
         expect(sim.result).toBeDefined();
       }, 60_000);
@@ -249,14 +249,14 @@ export function runElistTestE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EP
       it('should create a range list', async () => {
         const sim = await elistTest.simulate.listRange([0, 5]);
         const txHash = await elistTest.write.listRange([0, 5]);
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash , confirmations: 2});
 
         expect(sim.result).toBeDefined();
 
         // Verify range element
         const getSim = await elistTest.simulate.listGetRange([2]);
         const getTxHash = await elistTest.write.listGetRange([2]);
-        await publicClient.waitForTransactionReceipt({ hash: getTxHash });
+        await publicClient.waitForTransactionReceipt({ hash: getTxHash, confirmations: 2 });
 
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [getSim.result]);
         const value = decryptedArr[0]?.plaintext.value;
@@ -285,20 +285,81 @@ export function runElistTestE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EP
           [inputCts, handleTypes.euint256, walletClient.account.address],
           { value: parseEther('0.0002') },
         );
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash , confirmations: 2});
 
         expect(sim.result).toBeDefined();
       }, 60_000);
     });
 
     describe('List Shuffle', () => {
-      it('should shuffle list', async () => {
+      it('should shuffle list and change element positions', async () => {
+        // Create a fresh list with unique values
+        const values = [100, 200, 300, 400, 500];
+        const inputCts = [];
+        for (const value of values) {
+          const ct = await zap.encrypt(value, {
+            accountAddress: walletClient.account.address,
+            dappAddress: elistTestAddress,
+            handleType: handleTypes.euint256,
+          });
+          inputCts.push(ct);
+        }
+
+        const createTxHash = await elistTest.write.newEList(
+          [inputCts, handleTypes.euint256, walletClient.account.address],
+          { value: parseEther('0.0005') },
+        );
+        await publicClient.waitForTransactionReceipt({ hash: createTxHash, confirmations: 2 });
+
+        // Get all elements before shuffle
+        const valuesBefore: bigint[] = [];
+        for (let i = 0; i < values.length; i++) {
+          const getSim = await elistTest.simulate.listGet([i]);
+          const getTxHash = await elistTest.write.listGet([i]);
+          await publicClient.waitForTransactionReceipt({ hash: getTxHash, confirmations: 2 });
+
+          const decrypted = await zap.attestedDecrypt(walletClient as any, [getSim.result]);
+          valuesBefore.push(decrypted[0]?.plaintext.value as bigint);
+        }
+        console.log('Elements before shuffle:', valuesBefore);
+
+        // Shuffle the list
         const sim = await elistTest.simulate.listShuffle([], { value: parseEther('0.0001') });
         const txHash = await elistTest.write.listShuffle([], { value: parseEther('0.0001') });
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 2 });
 
+        console.log('Shuffled list handle:', sim.result);
         expect(sim.result).toBeDefined();
-      }, 60_000);
+
+        // Get all elements after shuffle
+        const valuesAfter: bigint[] = [];
+        for (let i = 0; i < values.length; i++) {
+          const getSim = await elistTest.simulate.listGet([i]);
+          const getTxHash = await elistTest.write.listGet([i]);
+          await publicClient.waitForTransactionReceipt({ hash: getTxHash, confirmations: 2 });
+
+          const decrypted = await zap.attestedDecrypt(walletClient as any, [getSim.result]);
+          valuesAfter.push(decrypted[0]?.plaintext.value as bigint);
+        }
+        console.log('Elements after shuffle:', valuesAfter);
+
+        // Verify all original values are still present (just reordered)
+        for (const val of values) {
+          expect(valuesAfter).toContain(BigInt(val));
+        }
+
+        // Check if at least one element changed position
+        let positionChanged = false;
+        for (let i = 0; i < values.length; i++) {
+          if (valuesBefore[i] !== valuesAfter[i]) {
+            positionChanged = true;
+            break;
+          }
+        }
+
+        expect(positionChanged).toBe(true);
+        console.log('At least one element changed position:', positionChanged);
+      }, 320_000);
     });
 
     describe('List Reverse', () => {
@@ -326,18 +387,18 @@ export function runElistTestE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EP
           [inputCts, handleTypes.euint256, walletClient.account.address],
           { value: parseEther('0.0003') },
         );
-        await publicClient.waitForTransactionReceipt({ hash: createTxHash });
+        await publicClient.waitForTransactionReceipt({ hash: createTxHash, confirmations: 2 });
 
         const sim = await elistTest.simulate.listReverse();
         const txHash = await elistTest.write.listReverse();
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash , confirmations: 2});
 
         expect(sim.result).toBeDefined();
 
         // After reversing [11,22,33], index 0 should be 33
         const getSim = await elistTest.simulate.listGet([0]);
         const getTxHash = await elistTest.write.listGet([0]);
-        await publicClient.waitForTransactionReceipt({ hash: getTxHash });
+        await publicClient.waitForTransactionReceipt({ hash: getTxHash, confirmations: 2 });
 
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [getSim.result]);
         const value = decryptedArr[0]?.plaintext.value;
@@ -377,7 +438,7 @@ export function runElistTestE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EP
 
         const sim = await elistTest.simulate.listSlice([ctStart, 3, ctDefault], { value: parseEther('0.0002') });
         const txHash = await elistTest.write.listSlice([ctStart, 3, ctDefault], { value: parseEther('0.0002') });
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash , confirmations: 2});
 
         expect(sim.result).toBeDefined();
       }, 120_000);
@@ -399,18 +460,18 @@ export function runElistTestE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EP
           [inputCts, handleTypes.euint256, walletClient.account.address],
           { value: parseEther('0.0005') },
         );
-        await publicClient.waitForTransactionReceipt({ hash: createTxHash });
+        await publicClient.waitForTransactionReceipt({ hash: createTxHash , confirmations: 2});
 
         const sim = await elistTest.simulate.listSlice([1, 4]);
         const txHash = await elistTest.write.listSlice([1, 4]);
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash , confirmations: 2});
 
         expect(sim.result).toBeDefined();
 
         // Verify first element of slice (should be 20)
         const getSim = await elistTest.simulate.listGet([0]);
         const getTxHash = await elistTest.write.listGet([0]);
-        await publicClient.waitForTransactionReceipt({ hash: getTxHash });
+        await publicClient.waitForTransactionReceipt({ hash: getTxHash, confirmations: 2 });
 
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [getSim.result]);
         const value = decryptedArr[0]?.plaintext.value;
@@ -421,7 +482,7 @@ export function runElistTestE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EP
     describe('Utility Functions', () => {
       it('should create empty list and check type and length', async () => {
         const createTxHash = await elistTest.write.newEmptyEList([handleTypes.euint256]);
-        await publicClient.waitForTransactionReceipt({ hash: createTxHash });
+        await publicClient.waitForTransactionReceipt({ hash: createTxHash , confirmations: 2});
 
         // Check type
         const typeSim = await elistTest.simulate.listTypeOf();
@@ -444,10 +505,12 @@ export function runElistTestE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EP
           inputCts.push(ct);
         }
 
-        await elistTest.write.newEList(
+        const txHash = await elistTest.write.newEList(
           [inputCts, handleTypes.euint256, walletClient.account.address],
           { value: parseEther('0.0003') },
         );
+
+        const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash , confirmations: 2});
 
         const typeSim = await elistTest.simulate.listTypeOf();
         expect(typeSim.result).toBe(handleTypes.euint256);
@@ -470,10 +533,11 @@ export function runElistTestE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EP
           inputCts.push(ct);
         }
 
-        await elistTest.write.newEList(
+        const createTxHash = await elistTest.write.newEList(
           [inputCts, handleTypes.euint256, walletClient.account.address],
           { value: parseEther('0.0003') },
         );
+        await publicClient.waitForTransactionReceipt({ hash: createTxHash, confirmations: 2 });
 
         const ctValue = await zap.encrypt(777, {
           accountAddress: walletClient.account.address,
@@ -482,12 +546,12 @@ export function runElistTestE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EP
         });
 
         const txHash = await elistTest.write.listSetUint16Index([1, ctValue], { value: parseEther('0.0001') });
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash , confirmations: 2});
 
         // Verify the set element
         const getSim = await elistTest.simulate.listGet([1]);
         const getTxHash = await elistTest.write.listGet([1]);
-        await publicClient.waitForTransactionReceipt({ hash: getTxHash });
+        await publicClient.waitForTransactionReceipt({ hash: getTxHash , confirmations: 2});
 
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [getSim.result]);
         const value = decryptedArr[0]?.plaintext.value;
@@ -520,12 +584,12 @@ export function runElistTestE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EP
         });
 
         const txHash = await elistTest.write.listInsertUint16Index([1, ctValue], { value: parseEther('0.0001') });
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash , confirmations: 2});
 
         // Verify the inserted element
         const getSim = await elistTest.simulate.listGet([1]);
         const getTxHash = await elistTest.write.listGet([1]);
-        await publicClient.waitForTransactionReceipt({ hash: getTxHash });
+        await publicClient.waitForTransactionReceipt({ hash: getTxHash , confirmations: 2});
 
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [getSim.result]);
         const value = decryptedArr[0]?.plaintext.value;
@@ -537,14 +601,14 @@ export function runElistTestE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EP
       it('should create a shuffled range list', async () => {
         const sim = await elistTest.simulate.listShuffledRange([0, 10], { value: parseEther('0.0001') });
         const txHash = await elistTest.write.listShuffledRange([0, 10], { value: parseEther('0.0001') });
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash , confirmations: 2});
 
         expect(sim.result).toBeDefined();
 
         // Verify we can get an element
         const getSim = await elistTest.simulate.listGetRange([0]);
         const getTxHash = await elistTest.write.listGetRange([0]);
-        await publicClient.waitForTransactionReceipt({ hash: getTxHash });
+        await publicClient.waitForTransactionReceipt({ hash: getTxHash , confirmations: 2});
 
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [getSim.result]);
         const value = decryptedArr[0]?.plaintext.value;
@@ -569,7 +633,7 @@ export function runElistTestE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EP
         const createTxHash = await elistTest.write.newBoolList([inputCts, walletClient.account.address], {
           value: parseEther('0.0003'),
         });
-        await publicClient.waitForTransactionReceipt({ hash: createTxHash });
+        await publicClient.waitForTransactionReceipt({ hash: createTxHash , confirmations: 2});
 
         // Append another bool
         const ctBool = await zap.encrypt(false, {
@@ -579,12 +643,12 @@ export function runElistTestE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EP
         });
 
         const appendTxHash = await elistTest.write.boolListAppend([ctBool], { value: parseEther('0.0001') });
-        await publicClient.waitForTransactionReceipt({ hash: appendTxHash });
+        await publicClient.waitForTransactionReceipt({ hash: appendTxHash , confirmations: 2});
 
         // Get first element
         const getSim = await elistTest.simulate.boolListGet([0]);
         const getTxHash = await elistTest.write.boolListGet([0]);
-        await publicClient.waitForTransactionReceipt({ hash: getTxHash });
+        await publicClient.waitForTransactionReceipt({ hash: getTxHash , confirmations: 2});
 
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [getSim.result]);
         const value = decryptedArr[0]?.plaintext.value;
@@ -606,7 +670,7 @@ export function runElistTestE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EP
         const createTxHash = await elistTest.write.newBoolList([inputCts, walletClient.account.address], {
           value: parseEther('0.0003'),
         });
-        await publicClient.waitForTransactionReceipt({ hash: createTxHash });
+        await publicClient.waitForTransactionReceipt({ hash: createTxHash , confirmations: 2});
 
         const ctValue = await zap.encrypt(false, {
           accountAddress: walletClient.account.address,
@@ -615,12 +679,12 @@ export function runElistTestE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EP
         });
 
         const txHash = await elistTest.write.boolListSet([2, ctValue], { value: parseEther('0.0001') });
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash, confirmations: 2});
 
         // Verify the set element
         const getSim = await elistTest.simulate.boolListGet([2]);
         const getTxHash = await elistTest.write.boolListGet([2]);
-        await publicClient.waitForTransactionReceipt({ hash: getTxHash });
+        await publicClient.waitForTransactionReceipt({ hash: getTxHash, confirmations: 2});
 
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [getSim.result]);
         const value = decryptedArr[0]?.plaintext.value;
@@ -642,7 +706,7 @@ export function runElistTestE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EP
         const createTxHash = await elistTest.write.newBoolList([inputCts, walletClient.account.address], {
           value: parseEther('0.0003'),
         });
-        await publicClient.waitForTransactionReceipt({ hash: createTxHash });
+        await publicClient.waitForTransactionReceipt({ hash: createTxHash, confirmations: 2});
 
         const ctIndex = await zap.encrypt(1, {
           accountAddress: walletClient.account.address,
@@ -659,19 +723,19 @@ export function runElistTestE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EP
         const txHash = await elistTest.write.boolListSetEncryptedIndex([ctIndex, ctValue], {
           value: parseEther('0.0002'),
         });
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash , confirmations: 2});
 
         // Verify the set element
         const getSim = await elistTest.simulate.boolListGet([1]);
         const getTxHash = await elistTest.write.boolListGet([1]);
-        await publicClient.waitForTransactionReceipt({ hash: getTxHash });
+        await publicClient.waitForTransactionReceipt({ hash: getTxHash, confirmations: 2 });
 
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [getSim.result]);
         const value = decryptedArr[0]?.plaintext.value;
         expect(value).toBe(true);
       }, 90_000);
 
-      it.skip('should get bool element or default', async () => {
+      it('should get bool element or default', async () => {
         const boolValues = [true, true];
         const inputCts = [];
         for (const value of boolValues) {
@@ -686,7 +750,7 @@ export function runElistTestE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EP
         const createTxHash = await elistTest.write.newBoolList([inputCts, walletClient.account.address], {
           value: parseEther('0.0002'),
         });
-        await publicClient.waitForTransactionReceipt({ hash: createTxHash });
+        await publicClient.waitForTransactionReceipt({ hash: createTxHash, confirmations: 2});
 
         const ctIndex = await zap.encrypt(0, {
           accountAddress: walletClient.account.address,
@@ -702,7 +766,7 @@ export function runElistTestE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EP
 
         const sim = await elistTest.simulate.boolListGetOr([ctIndex, ctDefault], { value: parseEther('0.0002') });
         const txHash = await elistTest.write.boolListGetOr([ctIndex, ctDefault], { value: parseEther('0.0002') });
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash , confirmations: 2});
 
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [sim.result]);
         const value = decryptedArr[0]?.plaintext.value;
@@ -724,7 +788,7 @@ export function runElistTestE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EP
         const createTxHash = await elistTest.write.newBoolList([inputCts, walletClient.account.address], {
           value: parseEther('0.0002'),
         });
-        await publicClient.waitForTransactionReceipt({ hash: createTxHash });
+        await publicClient.waitForTransactionReceipt({ hash: createTxHash, confirmations: 2});
 
         const ctValue = await zap.encrypt(false, {
           accountAddress: walletClient.account.address,
@@ -733,12 +797,12 @@ export function runElistTestE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EP
         });
 
         const txHash = await elistTest.write.boolListInsert([1, ctValue], { value: parseEther('0.0001') });
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash , confirmations: 2});
 
         // Verify the inserted element
         const getSim = await elistTest.simulate.boolListGet([1]);
         const getTxHash = await elistTest.write.boolListGet([1]);
-        await publicClient.waitForTransactionReceipt({ hash: getTxHash });
+        await publicClient.waitForTransactionReceipt({ hash: getTxHash, confirmations: 2});
 
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [getSim.result]);
         const value = decryptedArr[0]?.plaintext.value;
@@ -760,7 +824,7 @@ export function runElistTestE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EP
         const createTxHash = await elistTest.write.newBoolList([inputCts, walletClient.account.address], {
           value: parseEther('0.0002'),
         });
-        await publicClient.waitForTransactionReceipt({ hash: createTxHash });
+        await publicClient.waitForTransactionReceipt({ hash: createTxHash, confirmations: 2});
 
         const ctIndex = await zap.encrypt(1, {
           accountAddress: walletClient.account.address,
@@ -777,12 +841,12 @@ export function runElistTestE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EP
         const txHash = await elistTest.write.boolListInsertEncryptedIndex([ctIndex, ctValue], {
           value: parseEther('0.0002'),
         });
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash , confirmations: 2});
 
         // Verify the inserted element
         const getSim = await elistTest.simulate.boolListGet([1]);
         const getTxHash = await elistTest.write.boolListGet([1]);
-        await publicClient.waitForTransactionReceipt({ hash: getTxHash });
+        await publicClient.waitForTransactionReceipt({ hash: getTxHash, confirmations: 2 });
 
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [getSim.result]);
         const value = decryptedArr[0]?.plaintext.value;
@@ -804,7 +868,7 @@ export function runElistTestE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EP
         const createTxHash = await elistTest.write.newBoolList([inputCts, walletClient.account.address], {
           value: parseEther('0.0005'),
         });
-        await publicClient.waitForTransactionReceipt({ hash: createTxHash });
+        await publicClient.waitForTransactionReceipt({ hash: createTxHash, confirmations: 2 });
 
         const ctStart = await zap.encrypt(1, {
           accountAddress: walletClient.account.address,
@@ -821,12 +885,12 @@ export function runElistTestE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EP
         const txHash = await elistTest.write.boolListSliceLen([ctStart, 3, ctDefault], {
           value: parseEther('0.0002'),
         });
-        await publicClient.waitForTransactionReceipt({ hash: txHash });
+        await publicClient.waitForTransactionReceipt({ hash: txHash , confirmations: 2});
 
         // Verify first element of slice (should be false)
         const getSim = await elistTest.simulate.boolListGet([0]);
         const getTxHash = await elistTest.write.boolListGet([0]);
-        await publicClient.waitForTransactionReceipt({ hash: getTxHash });
+        await publicClient.waitForTransactionReceipt({ hash: getTxHash, confirmations: 2 });
 
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [getSim.result]);
         const value = decryptedArr[0]?.plaintext.value;

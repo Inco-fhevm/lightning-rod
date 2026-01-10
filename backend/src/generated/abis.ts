@@ -703,17 +703,6 @@ export const libTestAbi = [
   {
     type: 'function',
     inputs: [
-      { name: 'ciphertexts', internalType: 'bytes[]', type: 'bytes[]' },
-      { name: 'listType', internalType: 'enum ETypes', type: 'uint8' },
-      { name: 'user', internalType: 'address', type: 'address' },
-    ],
-    name: 'testNewElist',
-    outputs: [{ name: '', internalType: 'elist', type: 'bytes32' }],
-    stateMutability: 'payable',
-  },
-  {
-    type: 'function',
-    inputs: [
       { name: 'ciphertext', internalType: 'bytes', type: 'bytes' },
       { name: 'user', internalType: 'address', type: 'address' },
     ],
