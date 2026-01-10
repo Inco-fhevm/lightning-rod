@@ -432,6 +432,7 @@ contract LibTest {
         return encryptedAddress;
     }
 
+
     // ============ REVEAL OPERATIONS ============
 
     function testRevealEUint(euint256 a) external {

@@ -1,4 +1,4 @@
-import { HexString, parseAddress } from '@inco/js';
+import { handleTypes, HexString, parseAddress } from '@inco/js';
 import { incoVerifierAbi } from '@inco/js/abis/verifier';
 import { Lightning } from '@inco/js/lite';
 import {
@@ -20,9 +20,8 @@ import { beforeAll, describe, expect, it } from 'vitest';
 import addTwoBuild from '../../../contracts/out/AddTwo.sol/AddTwo.json';
 import { addTwoAbi } from '../generated/abis.js';
 import { type E2EConfig, type E2EParams } from './lightning-test.js';
-import { handleTypes } from '@inco/js';
 
-export function runAddTwoE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EParams) {
+export function runAddTwoE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EParams) {
   const { walletClient, publicClient, incoLite } = params;
   const valueToAdd = Math.floor(Math.random() * 100);
 
@@ -51,14 +50,11 @@ export function runAddTwoE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EParam
         client: publicClient,
       });
 
-      const inputCt = await zap.encrypt(
-        valueToAdd,
-        {
-          accountAddress: walletClient.account.address,
-          dappAddress,
-          handleType: handleTypes.euint256,
-        },
-      );
+      const inputCt = await zap.encrypt(valueToAdd, {
+        accountAddress: walletClient.account.address,
+        dappAddress,
+        handleType: handleTypes.euint256,
+      });
       const { resultHandle } = await addTwo(dappAddress, inputCt, walletClient, publicClient, cfg);
       console.log(`Result handle: ${resultHandle}`);
       const decrypted = await zap.attestedDecrypt(walletClient as any, [resultHandle]);
@@ -127,7 +123,7 @@ async function addTwo(
 async function deployAddTwo(cfg: E2EConfig): Promise<Address> {
   console.log();
   console.log(`Deploying AddTwo.sol contract ...`);
-  await fundAccount(cfg.senderPrivKey, cfg.chain, cfg.hostChainRpcUrl);
+  // await fundAccount(cfg.senderPrivKey, cfg.chain, cfg.hostChainRpcUrl);
   const account = privateKeyToAccount(cfg.senderPrivKey);
   const walletClient = createWalletClient({
     chain: cfg.chain,

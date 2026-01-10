@@ -4,6 +4,7 @@ import { runAddTwoE2ETest } from './lightning-addtwo.js';
 import { runLibTestE2ETest } from './lightning-libtest.js';
 import { Lightning } from '@inco/js/lite';
 import { privateKeyToAccount } from 'viem/accounts';
+import { runElistTestE2ETest } from './lightning-elisttest.ts';
 
 // E2EConfig contains all configuration needed to run a test against
 // a specific deployment.
@@ -62,4 +63,5 @@ export function runE2ETest(zap: Lightning, cfg: E2EConfig,) {
   const params: E2EParams = { walletClient, publicClient, incoLite };
   runAddTwoE2ETest(zap, cfg, params);
   runLibTestE2ETest(zap, cfg, params);
+  runElistTestE2ETest(zap, cfg, params);
 }

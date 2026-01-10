@@ -31,7 +31,348 @@ export const addTwoAbi = [
     outputs: [{ name: '', internalType: 'uint256', type: 'uint256' }],
     stateMutability: 'pure',
   },
+  {
+    type: 'function',
+    inputs: [
+      {
+        name: 'decryption',
+        internalType: 'struct DecryptionAttestation',
+        type: 'tuple',
+        components: [
+          { name: 'handle', internalType: 'bytes32', type: 'bytes32' },
+          { name: 'value', internalType: 'bytes32', type: 'bytes32' },
+        ],
+      },
+      { name: 'signatures', internalType: 'bytes[]', type: 'bytes[]' },
+    ],
+    name: 'isValidDecryptionAttestation',
+    outputs: [{ name: '', internalType: 'bool', type: 'bool' }],
+    stateMutability: 'nonpayable',
+  },
   { type: 'error', inputs: [], name: 'FeeNotPaid' },
+] as const
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// ElistTest
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+export const elistTestAbi = [
+  { type: 'receive', stateMutability: 'payable' },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'boolList',
+    outputs: [{ name: '', internalType: 'elist', type: 'bytes32' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'ctValue', internalType: 'bytes', type: 'bytes' }],
+    name: 'boolListAppend',
+    outputs: [{ name: '', internalType: 'elist', type: 'bytes32' }],
+    stateMutability: 'payable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'index', internalType: 'uint16', type: 'uint16' }],
+    name: 'boolListGet',
+    outputs: [{ name: '', internalType: 'ebool', type: 'bytes32' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'ctIndex', internalType: 'bytes', type: 'bytes' },
+      { name: 'ctDefaultValue', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'boolListGetOr',
+    outputs: [{ name: '', internalType: 'ebool', type: 'bytes32' }],
+    stateMutability: 'payable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'index', internalType: 'uint16', type: 'uint16' },
+      { name: 'ctValue', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'boolListInsert',
+    outputs: [{ name: '', internalType: 'elist', type: 'bytes32' }],
+    stateMutability: 'payable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'ctIndex', internalType: 'bytes', type: 'bytes' },
+      { name: 'ctValue', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'boolListInsertEncryptedIndex',
+    outputs: [{ name: '', internalType: 'elist', type: 'bytes32' }],
+    stateMutability: 'payable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'index', internalType: 'uint16', type: 'uint16' },
+      { name: 'ctValue', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'boolListSet',
+    outputs: [{ name: '', internalType: 'elist', type: 'bytes32' }],
+    stateMutability: 'payable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'ctIndex', internalType: 'bytes', type: 'bytes' },
+      { name: 'ctValue', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'boolListSetEncryptedIndex',
+    outputs: [{ name: '', internalType: 'elist', type: 'bytes32' }],
+    stateMutability: 'payable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'ctStart', internalType: 'bytes', type: 'bytes' },
+      { name: 'len', internalType: 'uint16', type: 'uint16' },
+      { name: 'ctDefaultValue', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'boolListSliceLen',
+    outputs: [{ name: '', internalType: 'elist', type: 'bytes32' }],
+    stateMutability: 'payable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'list',
+    outputs: [{ name: '', internalType: 'elist', type: 'bytes32' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'ctValue', internalType: 'bytes', type: 'bytes' }],
+    name: 'listAppend',
+    outputs: [{ name: '', internalType: 'elist', type: 'bytes32' }],
+    stateMutability: 'payable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'cts', internalType: 'bytes[]', type: 'bytes[]' },
+      { name: 'listType', internalType: 'enum ETypes', type: 'uint8' },
+      { name: 'user', internalType: 'address', type: 'address' },
+    ],
+    name: 'listConcat',
+    outputs: [{ name: '', internalType: 'elist', type: 'bytes32' }],
+    stateMutability: 'payable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'index', internalType: 'uint16', type: 'uint16' }],
+    name: 'listGet',
+    outputs: [{ name: '', internalType: 'euint256', type: 'bytes32' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'ctIndex', internalType: 'bytes', type: 'bytes' },
+      { name: 'ctDefaultValue', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'listGetOr',
+    outputs: [{ name: '', internalType: 'euint256', type: 'bytes32' }],
+    stateMutability: 'payable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'index', internalType: 'uint16', type: 'uint16' }],
+    name: 'listGetRange',
+    outputs: [{ name: '', internalType: 'euint256', type: 'bytes32' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'ctIndex', internalType: 'bytes', type: 'bytes' },
+      { name: 'ctValue', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'listInsert',
+    outputs: [{ name: '', internalType: 'elist', type: 'bytes32' }],
+    stateMutability: 'payable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'index', internalType: 'uint16', type: 'uint16' },
+      { name: 'ctValue', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'listInsertUint16Index',
+    outputs: [{ name: '', internalType: 'elist', type: 'bytes32' }],
+    stateMutability: 'payable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'listLength',
+    outputs: [{ name: '', internalType: 'uint16', type: 'uint16' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'start', internalType: 'uint16', type: 'uint16' },
+      { name: 'end', internalType: 'uint16', type: 'uint16' },
+    ],
+    name: 'listRange',
+    outputs: [{ name: '', internalType: 'elist', type: 'bytes32' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'listReverse',
+    outputs: [{ name: '', internalType: 'elist', type: 'bytes32' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'ctIndex', internalType: 'bytes', type: 'bytes' },
+      { name: 'ctValue', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'listSet',
+    outputs: [{ name: '', internalType: 'elist', type: 'bytes32' }],
+    stateMutability: 'payable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'index', internalType: 'uint16', type: 'uint16' },
+      { name: 'ctValue', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'listSetUint16Index',
+    outputs: [{ name: '', internalType: 'elist', type: 'bytes32' }],
+    stateMutability: 'payable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'listShuffle',
+    outputs: [{ name: '', internalType: 'elist', type: 'bytes32' }],
+    stateMutability: 'payable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'start', internalType: 'uint16', type: 'uint16' },
+      { name: 'end', internalType: 'uint16', type: 'uint16' },
+    ],
+    name: 'listShuffledRange',
+    outputs: [{ name: '', internalType: 'elist', type: 'bytes32' }],
+    stateMutability: 'payable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'ctStart', internalType: 'bytes', type: 'bytes' },
+      { name: 'len', internalType: 'uint16', type: 'uint16' },
+      { name: 'ctDefaultValue', internalType: 'bytes', type: 'bytes' },
+    ],
+    name: 'listSlice',
+    outputs: [{ name: '', internalType: 'elist', type: 'bytes32' }],
+    stateMutability: 'payable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'start', internalType: 'uint16', type: 'uint16' },
+      { name: 'end', internalType: 'uint16', type: 'uint16' },
+    ],
+    name: 'listSlice',
+    outputs: [{ name: '', internalType: 'elist', type: 'bytes32' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'listTypeOf',
+    outputs: [{ name: '', internalType: 'enum ETypes', type: 'uint8' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'inputs', internalType: 'bytes[]', type: 'bytes[]' },
+      { name: 'user', internalType: 'address', type: 'address' },
+    ],
+    name: 'newBoolList',
+    outputs: [{ name: '', internalType: 'elist', type: 'bytes32' }],
+    stateMutability: 'payable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'handles', internalType: 'bytes32[]', type: 'bytes32[]' },
+      { name: 'listType', internalType: 'enum ETypes', type: 'uint8' },
+    ],
+    name: 'newEList',
+    outputs: [{ name: '', internalType: 'elist', type: 'bytes32' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [
+      { name: 'inputs', internalType: 'bytes[]', type: 'bytes[]' },
+      { name: 'listType', internalType: 'enum ETypes', type: 'uint8' },
+      { name: 'user', internalType: 'address', type: 'address' },
+    ],
+    name: 'newEList',
+    outputs: [{ name: '', internalType: 'elist', type: 'bytes32' }],
+    stateMutability: 'payable',
+  },
+  {
+    type: 'function',
+    inputs: [{ name: 'listType', internalType: 'enum ETypes', type: 'uint8' }],
+    name: 'newEmptyEList',
+    outputs: [{ name: '', internalType: 'elist', type: 'bytes32' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'function',
+    inputs: [],
+    name: 'newRangeList',
+    outputs: [{ name: '', internalType: 'elist', type: 'bytes32' }],
+    stateMutability: 'view',
+  },
+  {
+    type: 'error',
+    inputs: [
+      { name: 'i', internalType: 'uint16', type: 'uint16' },
+      { name: 'len', internalType: 'uint16', type: 'uint16' },
+    ],
+    name: 'IndexOutOfRange',
+  },
+  {
+    type: 'error',
+    inputs: [
+      { name: 'start', internalType: 'uint16', type: 'uint16' },
+      { name: 'end', internalType: 'uint16', type: 'uint16' },
+    ],
+    name: 'InvalidRange',
+  },
+  {
+    type: 'error',
+    inputs: [
+      { name: 'start', internalType: 'uint16', type: 'uint16' },
+      { name: 'end', internalType: 'uint16', type: 'uint16' },
+      { name: 'len', internalType: 'uint16', type: 'uint16' },
+    ],
+    name: 'SliceOutOfRange',
+  },
+  {
+    type: 'error',
+    inputs: [{ name: 'listType', internalType: 'enum ETypes', type: 'uint8' }],
+    name: 'UnsupportedListType',
+  },
 ] as const
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -641,7 +982,7 @@ export const simpleConfidentialTokenAbi = [
     ],
     name: 'transfer',
     outputs: [{ name: '', internalType: 'ebool', type: 'bytes32' }],
-    stateMutability: 'nonpayable',
+    stateMutability: 'payable',
   },
   {
     type: 'function',
