@@ -123,7 +123,6 @@ async function addTwo(
 async function deployAddTwo(cfg: E2EConfig): Promise<Address> {
   console.log();
   console.log(`Deploying AddTwo.sol contract ...`);
-  // await fundAccount(cfg.senderPrivKey, cfg.chain, cfg.hostChainRpcUrl);
   const account = privateKeyToAccount(cfg.senderPrivKey);
   const walletClient = createWalletClient({
     chain: cfg.chain,
@@ -155,16 +154,3 @@ function prettifyInputCt(hex: HexString): string {
   return `${hex.slice(0, 8)}...${hex.slice(-6)}`;
 }
 
-export async function fundAccount(senderPrivKey: Hex, chain: Chain, hostChainRpcUrl: string) {
-  const richAccount = privateKeyToAccount('0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80');
-  const account = privateKeyToAccount(senderPrivKey);
-  const richWalletClient = createWalletClient({
-    chain,
-    transport: http(hostChainRpcUrl),
-  });
-  await richWalletClient.sendTransaction({
-    account: richAccount,
-    to: account.address,
-    value: parseEther('1'),
-  });
-}
