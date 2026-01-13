@@ -3,3 +3,4 @@ forge-std/=../node_modules/forge-std/src/
 ds-test/=../node_modules/ds-test/src/
 @inco/lightning/=../node_modules/@inco/lightning/
 @inco/=../node_modules/@inco/
+@inco/lightning-preview/=../node_modules/@inco/lightning-preview

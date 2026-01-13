@@ -7,7 +7,7 @@ export default defineConfig([
     plugins: [
       foundry({
         project: "../contracts/",
-        include: ["AddTwo.sol/**", "SimpleConfidentialToken.sol/**", "LibTest.sol/**"],
+        include: ["AddTwo.sol/**", "SimpleConfidentialToken.sol/**", "LibTest.sol/**", "ElistTest.sol/**"],
       }),
     ],
   },

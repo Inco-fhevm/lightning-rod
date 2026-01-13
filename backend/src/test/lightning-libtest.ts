@@ -1,6 +1,5 @@
 import { handleTypes, HexString, parseAddress } from '@inco/js';
 import { incoVerifierAbi } from '@inco/js/abis/verifier';
-import { encryptionSchemes } from '@inco/js/encryption';
 import { Lightning } from '@inco/js/lite';
 import {
   type Address,
@@ -24,7 +23,6 @@ import type { E2EParams } from './lightning-test.js';
 async function deployLibTest(cfg: E2EConfig): Promise<Address> {
   console.log();
   console.log(`Deploying LibTest.sol contract ...`);
-  await fundAccount(cfg.senderPrivKey, cfg.chain, cfg.hostChainRpcUrl);
   const account = privateKeyToAccount(cfg.senderPrivKey);
   const walletClient = createWalletClient({
     chain: cfg.chain,
@@ -52,21 +50,8 @@ async function deployLibTest(cfg: E2EConfig): Promise<Address> {
   return parseAddress(contractAddress);
 }
 
-async function fundAccount(senderPrivKey: Hex, chain: Chain, hostChainRpcUrl: string) {
-  const richAccount = privateKeyToAccount('0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80');
-  const account = privateKeyToAccount(senderPrivKey);
-  const richWalletClient = createWalletClient({
-    chain,
-    transport: http(hostChainRpcUrl),
-  });
-  await richWalletClient.sendTransaction({
-    account: richAccount,
-    to: account.address,
-    value: parseEther('1'),
-  });
-}
 
-export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EParams) {
+export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EParams) {
   const { walletClient, publicClient, incoLite } = params;
 
   describe('Lightning LibTest E2E', () => {
@@ -107,14 +92,11 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
 
       // Helper function to create euint256 handle
       async function createEuint256Handle(value: number): Promise<HexString> {
-        const inputCt = await zap.encrypt(
-          value,
-          {
-            accountAddress: walletClient.account.address,
-            dappAddress: libTestAddress,
-            handleType: handleTypes.euint256,
-          },
-        );
+        const inputCt = await zap.encrypt(value, {
+          accountAddress: walletClient.account.address,
+          dappAddress: libTestAddress,
+          handleType: handleTypes.euint256,
+        });
         const handleSim = await libTest.simulate.testNewEuint256([inputCt, walletClient.account.address], {
           value: parseEther('0.0001'),
         });
@@ -126,14 +108,11 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
 
       // Helper function to create ebool handle
       async function createEboolHandle(value: boolean): Promise<HexString> {
-        const inputCt = await zap.encrypt(
-          value,
-          {
-            accountAddress: walletClient.account.address,
-            dappAddress: libTestAddress,
-            handleType: handleTypes.ebool,
-          },
-        );
+        const inputCt = await zap.encrypt(value, {
+          accountAddress: walletClient.account.address,
+          dappAddress: libTestAddress,
+          handleType: handleTypes.ebool,
+        });
         const handleSim = await libTest.simulate.testNewEbool([inputCt, walletClient.account.address], {
           value: parseEther('0.0001'),
         });
@@ -145,14 +124,11 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
 
       // Helper function to create eaddress handle
       async function createEaddressHandle(address: Address): Promise<HexString> {
-        const ct = await zap.encrypt(
-          BigInt(address),
-          {
-            accountAddress: walletClient.account.address,
-            dappAddress: libTestAddress,
-            handleType: handleTypes.euint160,
-          },
-        );
+        const ct = await zap.encrypt(BigInt(address), {
+          accountAddress: walletClient.account.address,
+          dappAddress: libTestAddress,
+          handleType: handleTypes.euint160,
+        });
         const handleSim = await libTest.simulate.testNewEaddress([ct, walletClient.account.address], {
           value: parseEther('0.0001'),
         });
@@ -493,4 +469,3 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig,params: E2EPara
     });
   });
 }
-
