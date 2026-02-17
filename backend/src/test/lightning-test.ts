@@ -1,9 +1,10 @@
 import { incoLightningAbi } from '@inco/js/abis/lightning';
-import { Transport, PublicClient, Address, type Chain, type Hex, Account, WalletClient, GetContractReturnType, getContract, http, parseGwei, createWalletClient, createPublicClient, defineChain } from 'viem';
+import { Transport, PublicClient, Address, type Chain, type Hex, Account, WalletClient, GetContractReturnType, getContract, http, parseEther, parseGwei, createWalletClient, createPublicClient, defineChain } from 'viem';
 import { runAddTwoE2ETest } from './lightning-addtwo.js';
 import { runLibTestE2ETest } from './lightning-libtest.js';
 import { Lightning } from '@inco/js/lite';
 import { privateKeyToAccount } from 'viem/accounts';
+import { beforeAll } from 'vitest';
 import { runElistTestE2ETest } from './lightning-elisttest.ts';
 
 // E2EConfig contains all configuration needed to run a test against
@@ -58,6 +59,19 @@ export function runE2ETest(zap: Lightning, cfg: E2EConfig,) {
     abi: incoLightningAbi,
     address: zap.executorAddress,
     client: publicClient,
+  });
+
+  beforeAll(async () => {
+    const richAccount = privateKeyToAccount('0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80');
+    const richWalletClient = createWalletClient({
+      chain: viemChain,
+      transport: http(cfg.hostChainRpcUrl),
+    });
+    await richWalletClient.sendTransaction({
+      account: richAccount,
+      to: account.address,
+      value: parseEther('10'),
+    });
   });
 
   const params: E2EParams = { walletClient, publicClient, incoLite };

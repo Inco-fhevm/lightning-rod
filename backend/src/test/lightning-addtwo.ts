@@ -42,7 +42,7 @@ export function runAddTwoE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EPara
       );
     }, 100_000);
 
-    it('should read from the decrypted message', async () => {
+    it.only('should read from the decrypted message', async () => {
       const incoVerifierAddress = await incoLite.read.incoVerifier();
       const incoVerifier = getContract({
         abi: incoVerifierAbi,

@@ -42,7 +42,7 @@ async function deployAddTwo(cfg: E2EConfig): Promise<Address> {
 }
 
 test('renders IncoTest', { timeout: 60000 }, async () => {
-  const zap = await Lightning.localNode('testnet');
+  const zap = await Lightning.localNode('devnet');
   const senderPrivKey = zap.deployment.senderPrivateKey as Hex;
   const cfg: E2EConfig = {
     senderPrivKey: senderPrivKey,

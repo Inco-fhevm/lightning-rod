@@ -2,7 +2,7 @@
 pragma solidity ^0.8;
 
 // This line of import is all you need to get started with Inco
-import {euint256, ebool, e, inco} from "@inco/lightning/src/Lib.sol";
+import {euint256, ebool, e, inco} from "@inco/lightning/src/Lib.devnet.sol";
 
 /// @notice a fungible token whose balances and transfer values are confidential
 contract SimpleConfidentialToken {
