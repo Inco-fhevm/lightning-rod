@@ -1,5 +1,4 @@
 import { handleTypes, HexString, parseAddress } from '@inco/js';
-import { incoVerifierAbi } from '@inco/js/abis/verifier';
 import { Lightning } from '@inco/js/lite';
 import {
   type Address,
@@ -9,7 +8,6 @@ import {
   getContract,
   type Hex,
   http,
-  parseEther,
 } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { beforeAll, describe, expect, it } from 'vitest';
@@ -63,6 +61,7 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EPar
     let handleTrue: HexString;
     let handleFalse: HexString;
     let handleAddress: HexString;
+    let fee: bigint;
 
     beforeAll(async () => {
       console.warn('###############################################');
@@ -77,18 +76,14 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EPar
         `- The sender ${privateKeyToAccount(cfg.senderPrivKey).address} must have some ${cfg.chain.name} tokens`,
       );
 
-      const incoVerifierAddress = await incoLite.read.incoVerifier();
-      const incoVerifier = getContract({
-        abi: incoVerifierAbi,
-        address: incoVerifierAddress,
-        client: publicClient,
-      });
-
       libTest = getContract({
         abi: libTestAbi,
         address: libTestAddress,
         client: walletClient,
       });
+
+      // Query the fee dynamically from the contract
+      fee = await incoLite.read.getFee() as bigint;
 
       // Helper function to create euint256 handle
       async function createEuint256Handle(value: number): Promise<HexString> {
@@ -98,10 +93,10 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EPar
           handleType: handleTypes.euint256,
         });
         const handleSim = await libTest.simulate.testNewEuint256([inputCt, walletClient.account.address], {
-          value: parseEther('0.0001'),
+          value: fee,
         });
         await libTest.write.testNewEuint256([inputCt, walletClient.account.address], {
-          value: parseEther('0.0001'),
+          value: fee,
         });
         return handleSim.result as HexString;
       }
@@ -114,10 +109,10 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EPar
           handleType: handleTypes.ebool,
         });
         const handleSim = await libTest.simulate.testNewEbool([inputCt, walletClient.account.address], {
-          value: parseEther('0.0001'),
+          value: fee,
         });
         await libTest.write.testNewEbool([inputCt, walletClient.account.address], {
-          value: parseEther('0.0001'),
+          value: fee,
         });
         return handleSim.result as HexString;
       }
@@ -130,10 +125,10 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EPar
           handleType: handleTypes.euint160,
         });
         const handleSim = await libTest.simulate.testNewEaddress([ct, walletClient.account.address], {
-          value: parseEther('0.0001'),
+          value: fee,
         });
         await libTest.write.testNewEaddress([ct, walletClient.account.address], {
-          value: parseEther('0.0001'),
+          value: fee,
         });
         return handleSim.result as HexString;
       }
@@ -327,8 +322,8 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EPar
     // Random Number Generation Tests
     describe('Random Number Generation', () => {
       it('should test random number generation', async () => {
-        const sim = await libTest.simulate.testRand({ value: parseEther('0.0001') });
-        const txHash = await libTest.write.testRand({ value: parseEther('0.0001') });
+        const sim = await libTest.simulate.testRand({ value: fee });
+        const txHash = await libTest.write.testRand({ value: fee });
         await publicClient.waitForTransactionReceipt({ hash: txHash });
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [sim.result]);
         const value = decryptedArr[0]?.plaintext.value;
@@ -339,8 +334,8 @@ export function runLibTestE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EPar
 
       it('should test bounded random number generation', async () => {
         const upperBound = 100;
-        const sim = await libTest.simulate.testRandBounded([BigInt(upperBound)], { value: parseEther('0.0001') });
-        const txHash = await libTest.write.testRandBounded([BigInt(upperBound)], { value: parseEther('0.0001') });
+        const sim = await libTest.simulate.testRandBounded([BigInt(upperBound)], { value: fee });
+        const txHash = await libTest.write.testRandBounded([BigInt(upperBound)], { value: fee });
         await publicClient.waitForTransactionReceipt({ hash: txHash });
         const decryptedArr = await zap.attestedDecrypt(walletClient as any, [sim.result]);
         const value = decryptedArr[0]?.plaintext.value;

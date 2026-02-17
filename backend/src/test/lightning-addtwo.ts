@@ -42,7 +42,7 @@ export function runAddTwoE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EPara
       );
     }, 100_000);
 
-    it.only('should read from the decrypted message', async () => {
+    it('should read from the decrypted message', async () => {
       const incoVerifierAddress = await incoLite.read.incoVerifier();
       const incoVerifier = getContract({
         abi: incoVerifierAbi,
@@ -55,6 +55,7 @@ export function runAddTwoE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EPara
         dappAddress,
         handleType: handleTypes.euint256,
       });
+      console.log(`Input ct: ${inputCt}`);
       const { resultHandle } = await addTwo(dappAddress, inputCt, walletClient, publicClient, cfg);
       console.log(`Result handle: ${resultHandle}`);
       const decrypted = await zap.attestedDecrypt(walletClient as any, [resultHandle]);
