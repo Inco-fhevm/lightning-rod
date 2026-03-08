@@ -1,7 +1,6 @@
 {
   "name": "@inco/lightning-rod-test",
   "license": "Apache-2.0",
-  "type": "module",
   "scripts": {
     "test:e2e": "bun vitest run src/test/lightning.local.e2e.test.ts",
     "test:frontend:build": "bun vitest run src/test/build-validation.test.ts",
