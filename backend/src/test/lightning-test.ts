@@ -5,6 +5,8 @@ import { runLibTestE2ETest } from './lightning-libtest.js';
 import { Lightning } from '@inco/js/lite';
 import { privateKeyToAccount } from 'viem/accounts';
 import { runElistTestE2ETest } from './lightning-elisttest.ts';
+import { runCreditScoreGateE2ETest } from './lightning-creditscore.js';
+import { runAttestedComputeDemoE2ETest } from './lightning-attestedcompute.js';
 
 // E2EConfig contains all configuration needed to run a test against
 // a specific deployment.
@@ -64,4 +66,6 @@ export function runE2ETest(zap: Lightning, cfg: E2EConfig,) {
   runAddTwoE2ETest(zap, cfg, params);
   runLibTestE2ETest(zap, cfg, params);
   runElistTestE2ETest(zap, cfg, params);
+  runCreditScoreGateE2ETest(zap, cfg, params);
+  runAttestedComputeDemoE2ETest(zap, cfg, params);
 }
