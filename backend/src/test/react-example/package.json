@@ -5,7 +5,7 @@
   "scripts": {
     "build": "webpack --mode production",
     "start": "webpack serve --mode development",
-    "test": "bun vitest run test/Inco.spec.tsx"
+    "test": "bun vitest run test/"
   },
   "dependencies": {
     "@inco/js": "workspace:*",

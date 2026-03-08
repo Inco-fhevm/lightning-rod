@@ -6,5 +6,6 @@ export default defineConfig({
   test: {
     environment: 'happy-dom',
     setupFiles: ['./test/setup.ts'],
+    fileParallelism: false,
   },
 });
