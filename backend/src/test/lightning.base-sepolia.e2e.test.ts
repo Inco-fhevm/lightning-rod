@@ -9,13 +9,13 @@ describe(`Lightning Base Sepolia E2E`, { timeout: 50_000 }, async () => {
   loadDotEnv();
   loadDotEnv('secrets.env');
   const senderPrivKey = parse(HexString, getEnv('SENDER_PRIVATE_KEY'));
-  const hostChainRpcUrl = getEnv('BASE_SEPOLIA_RPC_URL');
+  const hostChainRpcUrls = getEnv('BASE_SEPOLIA_RPC_URL').split(',').map((url) => url.trim());
   const chain = baseSepolia;
   const zap = await Lightning.latest('testnet', chain.id);
   runE2ETest(zap, {
     chain,
     senderPrivKey,
-    hostChainRpcUrl,
+    hostChainRpcUrls,
   });
 });
 

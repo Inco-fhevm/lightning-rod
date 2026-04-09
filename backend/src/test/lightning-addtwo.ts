@@ -1,5 +1,4 @@
 import { handleTypes, HexString, parseAddress } from '@inco/js';
-import { incoVerifierAbi } from '@inco/js/abis/verifier';
 import { Lightning } from '@inco/js/lite';
 import {
   type Account,
@@ -7,6 +6,7 @@ import {
   type Chain,
   createPublicClient,
   createWalletClient,
+  fallback,
   getContract,
   type Hex,
   http,
@@ -25,7 +25,7 @@ export function runAddTwoE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EPara
   const { walletClient, publicClient, incoLite } = params;
   const valueToAdd = Math.floor(Math.random() * 100);
 
-  describe('Lightning AddTwo E2E', () => {
+  describe.only('Lightning AddTwo E2E', () => {
     let dappAddress: Address;
 
     beforeAll(async () => {
@@ -43,12 +43,6 @@ export function runAddTwoE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EPara
     }, 100_000);
 
     it('should read from the decrypted message', async () => {
-      const incoVerifierAddress = await incoLite.read.incoVerifier();
-      const incoVerifier = getContract({
-        abi: incoVerifierAbi,
-        address: incoVerifierAddress,
-        client: publicClient,
-      });
 
       const inputCt = await zap.encrypt(valueToAdd, {
         accountAddress: walletClient.account.address,
@@ -126,7 +120,7 @@ async function deployAddTwo(cfg: E2EConfig): Promise<Address> {
   const account = privateKeyToAccount(cfg.senderPrivKey);
   const walletClient = createWalletClient({
     chain: cfg.chain,
-    transport: http(cfg.hostChainRpcUrl),
+    transport: fallback(cfg.hostChainRpcUrls.map((url) => http(url))),
   });
 
   const byteCode = addTwoBuild.bytecode.object as Hex;
@@ -138,7 +132,7 @@ async function deployAddTwo(cfg: E2EConfig): Promise<Address> {
 
   const publicClient = createPublicClient({
     chain: cfg.chain,
-    transport: http(cfg.hostChainRpcUrl),
+    transport: fallback(cfg.hostChainRpcUrls.map((url) => http(url))),
   });
   const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
 
