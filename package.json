@@ -32,9 +32,9 @@
     "typescript": "^5.8.3"
   },
   "overrides": {
-    "@inco/lightning": "0.7.10",
-		"@inco/lightning-preview": "0.7.10",
-    "@inco/js": "0.7.10",
+    "@inco/lightning": "0.8.0-devnet-31",
+    "@inco/lightning-preview": "0.8.0-devnet-31",
+    "@inco/js": "0.8.0-devnet-31",
     "chalk": "^4.1.2",
     "is-core-module": "2.13.1",
     "error-ex": "1.3.2",
