@@ -3,7 +3,7 @@ import type { Address, Chain, Hex } from 'viem'
 import { createIncoLite, encrypt, decrypt } from './lib/inco.ts'
 import { privateKeyToAccount } from 'viem/accounts'
 import { addTwoAbi } from './abis.ts'
-import { createPublicClient, defineChain, getContract, parseEther } from 'viem'
+import { createPublicClient, defineChain, fallback, getContract, parseEther } from 'viem'
 import { parseGwei } from 'viem'
 import { createWalletClient, http } from 'viem'
 import { Lightning } from '@inco/js/lite'
@@ -35,8 +35,7 @@ export default function IncoTest({
   const handleCiphertextCreate = async () => {
     setIsEncrypting(true)
     try {
-      console.log(hostChainRpcUrls)
-      const zap = await Lightning.localNode('testnet');
+      const zap = await Lightning.localNode('devnet');
       const incoLite = await createIncoLite(chain, pepper)
       setIncoLite(incoLite)
       const encryptedValue = await encrypt(
@@ -65,12 +64,12 @@ export default function IncoTest({
     });
     const walletClient = createWalletClient({
       chain: viemChain,
-      transport: http(hostChainRpcUrl),
+      transport: fallback(hostChainRpcUrls.map((url) => http(url))),
       account,
     });
     const publicClient = createPublicClient({
       chain: viemChain,
-      transport: http(hostChainRpcUrl),
+      transport: fallback(hostChainRpcUrls.map((url) => http(url))),
     });
     const dapp = getContract({
       abi: addTwoAbi,
@@ -102,7 +101,7 @@ export default function IncoTest({
       console.error(`Error writing the call to add 2 to ${ciphertext}: ${err}`);
       throw err;
     }
-  }, [privateKey, chain, hostChainRpcUrl, addTwoAddress]);
+  }, [privateKey, chain, hostChainRpcUrls[0], addTwoAddress]);
 
   const decryptResult = useCallback(async () => {
     if (!incoLite || !resultHandle) {
@@ -112,7 +111,7 @@ export default function IncoTest({
     }
     console.log(`Starting decryption for handle: ${resultHandle}`);
     try {
-      const decrypted = await decrypt(incoLite, privateKey, chain, hostChainRpcUrl, resultHandle)
+      const decrypted = await decrypt(incoLite, privateKey, chain, hostChainRpcUrls[0]!, resultHandle)
       console.log(`Decryption successful: ${decrypted}`);
       setDecryptedResult(decrypted?.toString() ?? null)
       setError(null)
@@ -121,7 +120,7 @@ export default function IncoTest({
       setDecryptedResult(null)
       setError(err instanceof Error ? err.message : String(err))
     }
-  }, [incoLite, privateKey, chain, hostChainRpcUrl, resultHandle]);
+  }, [incoLite, privateKey, chain, hostChainRpcUrls, resultHandle]);
 
   useEffect(() => {
     if (ciphertext) {

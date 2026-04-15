@@ -4,6 +4,12 @@ on:
     branches:
       - main
   pull_request:
+  workflow_dispatch:
+    inputs:
+      sdk_version:
+        description: "Version of @inco SDK packages to test against (e.g. 0.9.0)"
+        required: true
+        type: string
 
 jobs:
   test:
@@ -22,5 +28,18 @@ jobs:
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
 
-      - run: bun install
+      - name: Override SDK version in package.json and .env
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          jq \
+            --arg v "${{ inputs.sdk_version }}" \
+            '.overrides["@inco/js"] = $v | .overrides["@inco/lightning"] = $v | .overrides["@inco/lightning-preview"] = $v' \
+            package.json > package.json.tmp
+          mv package.json.tmp package.json
+          echo "SDK overrides updated to ${{ inputs.sdk_version }}"
+
+          sed -i "s/^DOCKER_IMAGE_TAG=.*/DOCKER_IMAGE_TAG=v${{ inputs.sdk_version }}/" .env
+          echo "DOCKER_IMAGE_TAG updated to v${{ inputs.sdk_version }}"
+
+      - run: bun install --frozen-lockfile false
       - run: bun run test
