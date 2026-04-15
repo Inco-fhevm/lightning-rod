@@ -41,5 +41,5 @@ jobs:
           sed -i "s/^DOCKER_IMAGE_TAG=.*/DOCKER_IMAGE_TAG=v${{ inputs.sdk_version }}/" .env
           echo "DOCKER_IMAGE_TAG updated to v${{ inputs.sdk_version }}"
 
-      - run: bun install --frozen-lockfile false
+      - run: bun install
       - run: bun run test
