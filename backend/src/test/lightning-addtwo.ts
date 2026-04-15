@@ -25,7 +25,7 @@ export function runAddTwoE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EPara
   const { walletClient, publicClient, incoLite } = params;
   const valueToAdd = Math.floor(Math.random() * 100);
 
-  describe.only('Lightning AddTwo E2E', () => {
+  describe('Lightning AddTwo E2E', () => {
     let dappAddress: Address;
 
     beforeAll(async () => {
@@ -43,6 +43,9 @@ export function runAddTwoE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EPara
     }, 100_000);
 
     it('should read from the decrypted message', async () => {
+      console.log('###############################################');
+      console.log(await incoLite.read.incoVerifier());
+      console.log('###############################################');
 
       const inputCt = await zap.encrypt(valueToAdd, {
         accountAddress: walletClient.account.address,

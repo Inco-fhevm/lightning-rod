@@ -9,6 +9,7 @@ describe(`Lightning Local Node E2E`, { timeout: 50_000 }, async () => {
   runE2ETest(zap, {
     chain: anvil,
     senderPrivKey: zap.deployment.senderPrivateKey as Hex,
-    hostChainRpcUrls: ['http://127.0.0.1:8545'],
+    hostChainRpcUrls: zap.deployment.hostChainRpcUrls ?? ['http://127.0.0.1:8545'],
   });
 });
+

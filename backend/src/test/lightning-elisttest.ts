@@ -25,7 +25,7 @@ async function deployElistTest(cfg: E2EConfig): Promise<Address> {
   const account = privateKeyToAccount(cfg.senderPrivKey);
   const walletClient = createWalletClient({
     chain: cfg.chain,
-    transport: http(cfg.hostChainRpcUrl),
+    transport: http(cfg.hostChainRpcUrls[0]),
   });
 
   const byteCode = elistTestBuild.bytecode.object as Hex;
@@ -37,7 +37,7 @@ async function deployElistTest(cfg: E2EConfig): Promise<Address> {
 
   const publicClient = createPublicClient({
     chain: cfg.chain,
-    transport: http(cfg.hostChainRpcUrl),
+    transport: http(cfg.hostChainRpcUrls[0]),
   });
   const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
 
