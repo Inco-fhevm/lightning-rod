@@ -5,6 +5,7 @@ import {
   type Chain,
   createPublicClient,
   createWalletClient,
+  fallback,
   getContract,
   type Hex,
   http,
@@ -25,7 +26,7 @@ async function deployElistTest(cfg: E2EConfig): Promise<Address> {
   const account = privateKeyToAccount(cfg.senderPrivKey);
   const walletClient = createWalletClient({
     chain: cfg.chain,
-    transport: http(cfg.hostChainRpcUrls[0]),
+    transport: fallback(cfg.hostChainRpcUrls.map((url) => http(url))),
   });
 
   const byteCode = elistTestBuild.bytecode.object as Hex;
@@ -37,7 +38,7 @@ async function deployElistTest(cfg: E2EConfig): Promise<Address> {
 
   const publicClient = createPublicClient({
     chain: cfg.chain,
-    transport: http(cfg.hostChainRpcUrls[0]),
+    transport: fallback(cfg.hostChainRpcUrls.map((url) => http(url))),
   });
   const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
 

@@ -13,7 +13,7 @@ type IncoTestProps = {
   chain: Chain
   pepper: unknown
   privateKey: Hex
-  hostChainRpcUrl: string
+  hostChainRpcUrls: string[]
   value: bigint | boolean
   addTwoAddress: Address
 }
@@ -22,7 +22,7 @@ export default function IncoTest({
   chain,
   pepper,
   privateKey,
-  hostChainRpcUrl,
+  hostChainRpcUrls,
   value,
   addTwoAddress,
 }: IncoTestProps) {
@@ -35,6 +35,7 @@ export default function IncoTest({
   const handleCiphertextCreate = async () => {
     setIsEncrypting(true)
     try {
+      console.log(hostChainRpcUrls)
       const zap = await Lightning.localNode('testnet');
       const incoLite = await createIncoLite(chain, pepper)
       setIncoLite(incoLite)
@@ -42,7 +43,7 @@ export default function IncoTest({
         incoLite,
         privateKey,
         chain,
-        hostChainRpcUrl,
+        hostChainRpcUrls[0]!,
         value,
         addTwoAddress,
       )
@@ -55,7 +56,7 @@ export default function IncoTest({
       setIsEncrypting(false)
     }
   }
-  
+
   const handleCiphertextSubmit = useCallback(async (ciphertext: Hex) => {
     const account = privateKeyToAccount(privateKey);
     const viemChain = defineChain({
@@ -121,7 +122,7 @@ export default function IncoTest({
       setError(err instanceof Error ? err.message : String(err))
     }
   }, [incoLite, privateKey, chain, hostChainRpcUrl, resultHandle]);
-  
+
   useEffect(() => {
     if (ciphertext) {
       handleCiphertextSubmit(ciphertext as Hex).catch((err) => {
@@ -146,17 +147,17 @@ export default function IncoTest({
       )}
       {resultHandle && (
         <>
-        <p data-testid="result-handle">
-          <strong>Result handle:</strong> {resultHandle}
-        </p>
-        <button onClick={decryptResult} disabled={!resultHandle}>
-          {!resultHandle ? 'Result handle not found' : 'Decrypt result'}
-        </button>
-        {decryptedResult && (
-          <p data-testid="decrypted-result">
-            <strong>Decrypted result:</strong> {decryptedResult}
+          <p data-testid="result-handle">
+            <strong>Result handle:</strong> {resultHandle}
           </p>
-        )}
+          <button onClick={decryptResult} disabled={!resultHandle}>
+            {!resultHandle ? 'Result handle not found' : 'Decrypt result'}
+          </button>
+          {decryptedResult && (
+            <p data-testid="decrypted-result">
+              <strong>Decrypted result:</strong> {decryptedResult}
+            </p>
+          )}
         </>
       )}
       {error && (
