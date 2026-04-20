@@ -95,9 +95,9 @@
     },
   },
   "overrides": {
-    "@inco/js": "0.8.0-devnet-31",
-    "@inco/lightning": "0.8.0-devnet-31",
-    "@inco/lightning-preview": "0.8.0-devnet-31",
+    "@inco/js": "0.10.0-devnet-2",
+    "@inco/lightning": "0.10.0-devnet-2",
+    "@inco/lightning-preview": "0.10.0-devnet-2",
     "ansi-regex": "^6.2.2",
     "backslash": "^0.2.0",
     "chalk": "^4.1.2",
@@ -408,11 +408,11 @@
 
     "@hpke/hybridkem-x-wing": ["@hpke/hybridkem-x-wing@0.6.1", "", { "dependencies": { "@hpke/common": "^1.8.1", "@hpke/dhkem-x25519": "^1.6.4", "mlkem": "^2.5.0" } }, "sha512-mNdGapyHPw9gEicUlBYlWGjOpWmQyC49dEqLm5QtGZOSjIVSjSTBX/Bq2VxXNTeNdsRYIpPOalTwYbop/+4Ykw=="],
 
-    "@inco/js": ["@inco/js@0.8.0-devnet-31", "", { "dependencies": { "@bufbuild/protobuf": "2.10.0", "@connectrpc/connect": "2.1.0", "@connectrpc/connect-node": "2.1.0", "@connectrpc/connect-web": "2.1.0", "@grpc/grpc-js": "1.14.0", "@hpke/chacha20poly1305": "1.7.1", "@hpke/core": "1.7.5", "@hpke/hybridkem-x-wing": "0.6.1", "effect": "3.21.0", "sha3": "2.1.4", "viem": "2.39.3" } }, "sha512-qbpqLLOE/ZICwueXTnlw9adrGqmU0NEYpEgOcmJZc2pmPxMsyYwU1uwPyjgdPjmsOYJPgQLFbczYrN+e4sS8nA=="],
+    "@inco/js": ["@inco/js@0.10.0-devnet-2", "", { "dependencies": { "@bufbuild/protobuf": "2.10.0", "@connectrpc/connect": "2.1.0", "@connectrpc/connect-node": "2.1.0", "@connectrpc/connect-web": "2.1.0", "@grpc/grpc-js": "1.14.0", "@hpke/chacha20poly1305": "1.7.1", "@hpke/core": "1.7.5", "@hpke/hybridkem-x-wing": "0.6.1", "effect": "3.21.0", "sha3": "2.1.4", "viem": "2.39.3" } }, "sha512-lHWaS5yVxvvlfNP+zIqXvYi8FqeEoEYZC8rg+zfOh2X47s6GG52LU1w0EyfbYCilJu458x5BQb6pZ9PQRlmQ5g=="],
 
-    "@inco/lightning": ["@inco/lightning@0.8.0-devnet-31", "", { "dependencies": { "@inco/shared": "0.1.0", "@openzeppelin/contracts": "5.4.0", "@openzeppelin/contracts-upgradeable": "5.4.0", "@safe-global/safe-smart-account": "git+https://github.com/safe-global/safe-smart-account.git#dc437e8", "ds-test": "git+https://github.com/dapphub/ds-test.git#e282159", "forge-std": "git+https://github.com/foundry-rs/forge-std.git#2f05b30", "tsx": "4.20.6" } }, "sha512-xQrjiqi+Raf0AQNjVN/9ug6Kq4KhfiSRzNoq73gL0vR8pG2+LdzxVLzV/LJwUnRr4Y39+zpQ91rb1FOwUzUqHA=="],
+    "@inco/lightning": ["@inco/lightning@0.10.0-devnet-2", "", { "dependencies": { "@inco/shared": "0.1.0", "@openzeppelin/contracts": "5.4.0", "@openzeppelin/contracts-upgradeable": "5.4.0", "@safe-global/safe-smart-account": "git+https://github.com/safe-global/safe-smart-account.git#dc437e8", "ds-test": "git+https://github.com/dapphub/ds-test.git#e282159", "forge-std": "git+https://github.com/foundry-rs/forge-std.git#2f05b30", "tsx": "4.20.6" } }, "sha512-38xLP72D9wv1Xc5phk5EwEl+31QzRb9czWIC6dw55lZSVRsy8vINaUr79rsLninnP5NZp5QW+4lJpLWm3QiASw=="],
 
-    "@inco/lightning-preview": ["@inco/lightning-preview@0.8.0-devnet-31", "", { "dependencies": { "@inco/lightning": "workspace:*", "@openzeppelin/contracts": "5.4.0", "@openzeppelin/contracts-upgradeable": "5.4.0", "ds-test": "git+https://github.com/dapphub/ds-test.git#e282159", "forge-std": "git+https://github.com/foundry-rs/forge-std.git#2f05b30" } }, "sha512-bgRNPcB1Mqet2yVYSnjreRPV2vT+E4ocNI5deNSkS+abDoRmHfexznVNX3aED1ay9N9GezVlD9F/QbWS7bW1nA=="],
+    "@inco/lightning-preview": ["@inco/lightning-preview@0.10.0-devnet-2", "", { "dependencies": { "@inco/lightning": "workspace:*", "@openzeppelin/contracts": "5.4.0", "@openzeppelin/contracts-upgradeable": "5.4.0", "ds-test": "git+https://github.com/dapphub/ds-test.git#e282159", "forge-std": "git+https://github.com/foundry-rs/forge-std.git#2f05b30" } }, "sha512-fPqsZypAkjKwoFclWYI8fPAb4xCreBvX+xkC9KDtpMr86bkQ2No/6rdGB1qk8ahGz2Yw7n3DGMo5y846/0bk8A=="],
 
     "@inco/lightning-rod-test": ["@inco/lightning-rod-test@workspace:backend"],
 
@@ -1683,6 +1683,10 @@
     "@inco/lightning-preview/ds-test": ["ds-test@github:dapphub/ds-test#e282159", {}, "dapphub-ds-test-e282159"],
 
     "@inco/lightning-preview/forge-std": ["forge-std@github:foundry-rs/forge-std#2f05b30", {}, "foundry-rs-forge-std-2f05b30"],
+
+    "@inco/shared/ds-test": ["ds-test@github:dapphub/ds-test#e282159", {}, "dapphub-ds-test-e282159"],
+
+    "@inco/shared/forge-std": ["forge-std@github:foundry-rs/forge-std#2999b65", {}, "foundry-rs-forge-std-2999b65"],
 
     "@jsonjoy.com/fs-snapshot/@jsonjoy.com/json-pack": ["@jsonjoy.com/json-pack@17.67.0", "", { "dependencies": { "@jsonjoy.com/base64": "17.67.0", "@jsonjoy.com/buffers": "17.67.0", "@jsonjoy.com/codegen": "17.67.0", "@jsonjoy.com/json-pointer": "17.67.0", "@jsonjoy.com/util": "17.67.0", "hyperdyperid": "^1.2.0", "thingies": "^2.5.0", "tree-dump": "^1.1.0" }, "peerDependencies": { "tslib": "2" } }, "sha512-t0ejURcGaZsn1ClbJ/3kFqSOjlryd92eQY465IYrezsXmPcfHPE/av4twRSxf6WE+TkZgLY+71vCZbiIiFKA/w=="],
 
