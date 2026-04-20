@@ -42,7 +42,7 @@ jobs:
 
           sed -i "s/^DOCKER_IMAGE_TAG=.*/DOCKER_IMAGE_TAG=v$SDK_VERSION/" .env
 
-          if [[ "$SDK_VER" =~ ^[0-9]+\.[0-9]+\.[0-9]+-([a-zA-Z]+)-[0-9]+$ ]]; then
+          if [[ "$SDK_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+-([a-zA-Z]+)-[0-9]+$ ]]; then
             PEPPER="${BASH_REMATCH[1]}"
           else
             PEPPER="testnet"
