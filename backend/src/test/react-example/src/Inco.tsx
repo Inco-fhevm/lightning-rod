@@ -3,7 +3,7 @@ import type { Address, Chain, Hex } from 'viem'
 import { createIncoLite, encrypt, decrypt } from './lib/inco.ts'
 import { privateKeyToAccount } from 'viem/accounts'
 import { addTwoAbi } from './abis.ts'
-import { createPublicClient, defineChain, getContract, parseEther } from 'viem'
+import { createPublicClient, defineChain, fallback, getContract, parseEther } from 'viem'
 import { parseGwei } from 'viem'
 import { createWalletClient, http } from 'viem'
 import { Lightning } from '@inco/js/lite'
@@ -13,7 +13,7 @@ type IncoTestProps = {
   chain: Chain
   pepper: unknown
   privateKey: Hex
-  hostChainRpcUrl: string
+  hostChainRpcUrls: string[]
   value: bigint | boolean
   addTwoAddress: Address
 }
@@ -22,7 +22,7 @@ export default function IncoTest({
   chain,
   pepper,
   privateKey,
-  hostChainRpcUrl,
+  hostChainRpcUrls,
   value,
   addTwoAddress,
 }: IncoTestProps) {
@@ -35,16 +35,16 @@ export default function IncoTest({
   const handleCiphertextCreate = async () => {
     setIsEncrypting(true)
     try {
-      const zap = await Lightning.localNode('testnet');
       const incoLite = await createIncoLite(chain, pepper)
       setIncoLite(incoLite)
       const encryptedValue = await encrypt(
         incoLite,
         privateKey,
         chain,
-        hostChainRpcUrl,
+        hostChainRpcUrls[0]!,
         value,
         addTwoAddress,
+        pepper as string,
       )
       setCiphertext(encryptedValue)
       setError(null)
@@ -55,7 +55,7 @@ export default function IncoTest({
       setIsEncrypting(false)
     }
   }
-  
+
   const handleCiphertextSubmit = useCallback(async (ciphertext: Hex) => {
     const account = privateKeyToAccount(privateKey);
     const viemChain = defineChain({
@@ -64,12 +64,12 @@ export default function IncoTest({
     });
     const walletClient = createWalletClient({
       chain: viemChain,
-      transport: http(hostChainRpcUrl),
+      transport: fallback(hostChainRpcUrls.map((url) => http(url))),
       account,
     });
     const publicClient = createPublicClient({
       chain: viemChain,
-      transport: http(hostChainRpcUrl),
+      transport: fallback(hostChainRpcUrls.map((url) => http(url))),
     });
     const dapp = getContract({
       abi: addTwoAbi,
@@ -101,7 +101,7 @@ export default function IncoTest({
       console.error(`Error writing the call to add 2 to ${ciphertext}: ${err}`);
       throw err;
     }
-  }, [privateKey, chain, hostChainRpcUrl, addTwoAddress]);
+  }, [privateKey, chain, hostChainRpcUrls[0], addTwoAddress]);
 
   const decryptResult = useCallback(async () => {
     if (!incoLite || !resultHandle) {
@@ -111,7 +111,7 @@ export default function IncoTest({
     }
     console.log(`Starting decryption for handle: ${resultHandle}`);
     try {
-      const decrypted = await decrypt(incoLite, privateKey, chain, hostChainRpcUrl, resultHandle)
+      const decrypted = await decrypt(incoLite, privateKey, chain, hostChainRpcUrls[0]!, resultHandle)
       console.log(`Decryption successful: ${decrypted}`);
       setDecryptedResult(decrypted?.toString() ?? null)
       setError(null)
@@ -120,8 +120,8 @@ export default function IncoTest({
       setDecryptedResult(null)
       setError(err instanceof Error ? err.message : String(err))
     }
-  }, [incoLite, privateKey, chain, hostChainRpcUrl, resultHandle]);
-  
+  }, [incoLite, privateKey, chain, hostChainRpcUrls, resultHandle]);
+
   useEffect(() => {
     if (ciphertext) {
       handleCiphertextSubmit(ciphertext as Hex).catch((err) => {
@@ -146,17 +146,17 @@ export default function IncoTest({
       )}
       {resultHandle && (
         <>
-        <p data-testid="result-handle">
-          <strong>Result handle:</strong> {resultHandle}
-        </p>
-        <button onClick={decryptResult} disabled={!resultHandle}>
-          {!resultHandle ? 'Result handle not found' : 'Decrypt result'}
-        </button>
-        {decryptedResult && (
-          <p data-testid="decrypted-result">
-            <strong>Decrypted result:</strong> {decryptedResult}
+          <p data-testid="result-handle">
+            <strong>Result handle:</strong> {resultHandle}
           </p>
-        )}
+          <button onClick={decryptResult} disabled={!resultHandle}>
+            {!resultHandle ? 'Result handle not found' : 'Decrypt result'}
+          </button>
+          {decryptedResult && (
+            <p data-testid="decrypted-result">
+              <strong>Decrypted result:</strong> {decryptedResult}
+            </p>
+          )}
         </>
       )}
       {error && (

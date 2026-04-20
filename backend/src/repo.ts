@@ -1,6 +1,7 @@
 import * as dotenv from 'dotenv';
 import { readFile } from 'fs/promises';
 import * as path from 'path';
+import type { LocalNodePepper } from '@inco/js/lite';
 
 const root = path.resolve(__dirname, '..', '..');
 
@@ -15,4 +16,8 @@ export function resolveRoot(...paths: string[]): string {
 
 export async function readFileFromRoot(...paths: string[]): Promise<Buffer> {
   return await readFile(resolveRoot(...paths));
+}
+
+export function getPepper(): LocalNodePepper {
+  return (process.env.PEPPER ?? 'testnet') as LocalNodePepper;
 }

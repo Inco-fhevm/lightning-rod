@@ -1,6 +1,6 @@
 import { incoLightningAbi } from '@inco/js/abis/lightning';
 import { incoVerifierAbi } from '@inco/js/abis/verifier';
-import { Lightning } from '@inco/js/lite';
+import { Lightning, LocalNodePepper } from '@inco/js/lite';
 import { handleTypes } from '@inco/js';
 import { Chain, createPublicClient, createWalletClient, defineChain, getContract, Hex, http, parseGwei } from 'viem';
 import { Address, privateKeyToAccount } from 'viem/accounts';
@@ -18,10 +18,11 @@ export const encrypt = async (
   hostChainRpcUrl: string,
   value: bigint | boolean,
   addTwoAddress: Address,
+  pepper: string,
 ) => {
   let privateKeyHex: Hex;
   if (chain === anvil) {
-    const zap = await Lightning.localNode('testnet');
+    const zap = await Lightning.localNode(pepper as LocalNodePepper);
     privateKeyHex = zap.deployment.senderPrivateKey as Hex;
   } else {
     privateKeyHex = privateKey;

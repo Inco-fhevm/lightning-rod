@@ -2,22 +2,24 @@ import { expect, test } from 'vitest';
 import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import IncoTest from '../src/Inco.tsx';
 import { anvil } from 'viem/chains';
-import { Address, createPublicClient, createWalletClient, http, Hex } from 'viem';
+import { Address, createPublicClient, createWalletClient, http, Hex, fallback } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import addTwoBuild from '../../../../../contracts/out/AddTwo.sol/AddTwo.json';
 import { addTwoAbi } from '../src/abis.js';
 import { fundAccount, E2EConfig } from '../src/test-helpers.js';
-import { Lightning } from '@inco/js/lite';
+import { Lightning, LocalNodePepper } from '@inco/js/lite';
+
+const pepper = (process.env.PEPPER ?? 'testnet') as LocalNodePepper;
 
 // Deploys the AddTwo.sol contract on the host chain.
 async function deployAddTwo(cfg: E2EConfig): Promise<Address> {
   console.log();
   console.log(`Deploying AddTwo.sol contract ...`);
-  await fundAccount(cfg.senderPrivKey, cfg.chain, cfg.hostChainRpcUrl);
+  await fundAccount(cfg.senderPrivKey, cfg.chain, cfg.hostChainRpcUrls[0]!);
   const account = privateKeyToAccount(cfg.senderPrivKey);
   const walletClient = createWalletClient({
     chain: cfg.chain,
-    transport: http(cfg.hostChainRpcUrl),
+    transport: fallback(cfg.hostChainRpcUrls.map((url) => http(url))),
   });
 
   const byteCode = addTwoBuild.bytecode.object as Hex;
@@ -29,7 +31,7 @@ async function deployAddTwo(cfg: E2EConfig): Promise<Address> {
 
   const publicClient = createPublicClient({
     chain: cfg.chain,
-    transport: http(cfg.hostChainRpcUrl),
+    transport: fallback(cfg.hostChainRpcUrls.map((url) => http(url))),
   });
   const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
 
@@ -42,20 +44,20 @@ async function deployAddTwo(cfg: E2EConfig): Promise<Address> {
 }
 
 test('renders IncoTest', { timeout: 60000 }, async () => {
-  const zap = await Lightning.localNode('testnet');
+  const zap = await Lightning.localNode(pepper);
   const senderPrivKey = zap.deployment.senderPrivateKey as Hex;
   const cfg: E2EConfig = {
     senderPrivKey: senderPrivKey,
     chain: anvil,
-    hostChainRpcUrl: 'http://localhost:8545',
+    hostChainRpcUrls: ['http://localhost:8545'],
   };
   const dappAddress = await deployAddTwo(cfg);
   const { unmount } = render(
     <IncoTest
       chain={anvil}
-      pepper="testnet"
+      pepper={pepper}
       privateKey={senderPrivKey}
-      hostChainRpcUrl="http://localhost:8545"
+      hostChainRpcUrls={['http://localhost:8545']}
       value={100n}
       addTwoAddress={dappAddress}
     />
@@ -72,7 +74,7 @@ test('renders IncoTest', { timeout: 60000 }, async () => {
   await waitFor(() => {
     expect(screen.getByText(/Ciphertext:/)).toBeInTheDocument();
   });
-  
+
   // Wait for result handle to appear (this happens after transaction is submitted and confirmed)
   await waitFor(
     () => {
@@ -82,7 +84,7 @@ test('renders IncoTest', { timeout: 60000 }, async () => {
     },
     { timeout: 20000 }
   );
-  
+
   const decryptButton = screen.getByRole('button', { name: 'Decrypt result' });
   expect(decryptButton).toBeInTheDocument();
   expect(decryptButton).not.toBeDisabled();
@@ -93,7 +95,7 @@ test('renders IncoTest', { timeout: 60000 }, async () => {
     },
     { timeout: 30000 }
   );
-  
+
   // Verify the decrypted result is correct (100 + 2 = 102)
   const decryptedResult = screen.getByTestId('decrypted-result');
   expect(decryptedResult).toHaveTextContent('102');

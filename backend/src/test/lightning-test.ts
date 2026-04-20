@@ -1,5 +1,5 @@
 import { incoLightningAbi } from '@inco/js/abis/lightning';
-import { Transport, PublicClient, Address, type Chain, type Hex, Account, WalletClient, GetContractReturnType, getContract, http, parseGwei, createWalletClient, createPublicClient, defineChain } from 'viem';
+import { Transport, PublicClient, Address, type Chain, type Hex, Account, WalletClient, GetContractReturnType, getContract, http, parseGwei, createWalletClient, createPublicClient, defineChain, fallback } from 'viem';
 import { runAddTwoE2ETest } from './lightning-addtwo.js';
 import { runLibTestE2ETest } from './lightning-libtest.js';
 import { Lightning } from '@inco/js/lite';
@@ -13,8 +13,8 @@ export interface E2EConfig {
   // requesting a reencryption. Needs to have some tokens on the chain.
   senderPrivKey: Hex;
   chain: Chain;
-  // RPC of the host chain.
-  hostChainRpcUrl: string;
+  // List of RPC URLs of the host chain.
+  hostChainRpcUrls: readonly string[];
   // Address of the confidential token contract.
   // dappAddress: Address;
 }
@@ -26,7 +26,7 @@ export interface E2EParams {
     PublicClient<Transport, Chain>,
     Address
   >;
-} 
+}
 
 export const backoffConfig = {
   errHandler: (error: Error, attempt: number) => {
@@ -46,12 +46,12 @@ export function runE2ETest(zap: Lightning, cfg: E2EConfig,) {
   });
   const walletClient = createWalletClient({
     chain: viemChain,
-    transport: http(cfg.hostChainRpcUrl),
+    transport: fallback(cfg.hostChainRpcUrls.map((url) => http(url))),
     account,
   });
   const publicClient = createPublicClient({
     chain: viemChain,
-    transport: http(cfg.hostChainRpcUrl),
+    transport: fallback(cfg.hostChainRpcUrls.map((url) => http(url))),
   }) as PublicClient<Transport, Chain>;
 
   const incoLite = getContract({

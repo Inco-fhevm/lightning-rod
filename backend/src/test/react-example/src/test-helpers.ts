@@ -9,7 +9,7 @@ export interface E2EConfig {
   senderPrivKey: Hex;
   chain: Chain;
   // RPC of the host chain.
-  hostChainRpcUrl: string;
+  hostChainRpcUrls: string[];
 }
 
 export async function fundAccount(senderPrivKey: Hex, chain: Chain, hostChainRpcUrl: string) {

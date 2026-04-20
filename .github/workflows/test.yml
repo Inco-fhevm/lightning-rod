@@ -4,6 +4,12 @@ on:
     branches:
       - main
   pull_request:
+  workflow_dispatch:
+    inputs:
+      sdk_version:
+        description: "Version of @inco SDK packages to test against (e.g. 0.9.0)"
+        required: true
+        type: string
 
 jobs:
   test:
@@ -21,6 +27,28 @@ jobs:
 
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
+
+      - name: Override SDK version in package.json and .env
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          SDK_VERSION: ${{ inputs.sdk_version }}
+        run: |
+          jq --arg v "$SDK_VERSION" \
+            '.overrides["@inco/js"] = $v
+              | .overrides["@inco/lightning"] = $v
+              | .overrides["@inco/lightning-preview"] = $v' \
+            package.json > package.json.tmp
+          mv package.json.tmp package.json
+
+          sed -i "s/^DOCKER_IMAGE_TAG=.*/DOCKER_IMAGE_TAG=v$SDK_VERSION/" .env
+
+          if [[ "$SDK_VER" =~ ^[0-9]+\.[0-9]+\.[0-9]+-([a-zA-Z]+)-[0-9]+$ ]]; then
+            PEPPER="${BASH_REMATCH[1]}"
+          else
+            PEPPER="testnet"
+          fi
+          sed -i "s/^PEPPER=.*/PEPPER=$PEPPER/" .env
+          echo "PEPPER updated to $PEPPER"
 
       - run: bun install
       - run: bun run test
