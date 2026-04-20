@@ -30,16 +30,25 @@ jobs:
 
       - name: Override SDK version in package.json and .env
         if: github.event_name == 'workflow_dispatch'
+        env:
+          SDK_VERSION: ${{ inputs.sdk_version }}
         run: |
-          jq \
-            --arg v "${{ inputs.sdk_version }}" \
-            '.overrides["@inco/js"] = $v | .overrides["@inco/lightning"] = $v | .overrides["@inco/lightning-preview"] = $v' \
+          jq --arg v "$SDK_VERSION" \
+            '.overrides["@inco/js"] = $v
+              | .overrides["@inco/lightning"] = $v
+              | .overrides["@inco/lightning-preview"] = $v' \
             package.json > package.json.tmp
           mv package.json.tmp package.json
-          echo "SDK overrides updated to ${{ inputs.sdk_version }}"
 
-          sed -i "s/^DOCKER_IMAGE_TAG=.*/DOCKER_IMAGE_TAG=v${{ inputs.sdk_version }}/" .env
-          echo "DOCKER_IMAGE_TAG updated to v${{ inputs.sdk_version }}"
+          sed -i "s/^DOCKER_IMAGE_TAG=.*/DOCKER_IMAGE_TAG=v$SDK_VERSION/" .env
+
+          if [[ "$SDK_VER" =~ ^[0-9]+\.[0-9]+\.[0-9]+-([a-zA-Z]+)-[0-9]+$ ]]; then
+            PEPPER="${BASH_REMATCH[1]}"
+          else
+            PEPPER="testnet"
+          fi
+          sed -i "s/^PEPPER=.*/PEPPER=$PEPPER/" .env
+          echo "PEPPER updated to $PEPPER"
 
       - run: bun install
       - run: bun run test

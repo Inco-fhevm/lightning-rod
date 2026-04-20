@@ -7,7 +7,9 @@ import { privateKeyToAccount } from 'viem/accounts';
 import addTwoBuild from '../../../../../contracts/out/AddTwo.sol/AddTwo.json';
 import { addTwoAbi } from '../src/abis.js';
 import { fundAccount, E2EConfig } from '../src/test-helpers.js';
-import { Lightning } from '@inco/js/lite';
+import { Lightning, LocalNodePepper } from '@inco/js/lite';
+
+const pepper = (process.env.PEPPER ?? 'testnet') as LocalNodePepper;
 
 // Deploys the AddTwo.sol contract on the host chain.
 async function deployAddTwo(cfg: E2EConfig): Promise<Address> {
@@ -42,7 +44,7 @@ async function deployAddTwo(cfg: E2EConfig): Promise<Address> {
 }
 
 test('renders IncoTest', { timeout: 60000 }, async () => {
-  const zap = await Lightning.localNode('devnet');
+  const zap = await Lightning.localNode(pepper);
   const senderPrivKey = zap.deployment.senderPrivateKey as Hex;
   const cfg: E2EConfig = {
     senderPrivKey: senderPrivKey,
@@ -53,7 +55,7 @@ test('renders IncoTest', { timeout: 60000 }, async () => {
   const { unmount } = render(
     <IncoTest
       chain={anvil}
-      pepper="devnet"
+      pepper={pepper}
       privateKey={senderPrivKey}
       hostChainRpcUrls={['http://localhost:8545']}
       value={100n}

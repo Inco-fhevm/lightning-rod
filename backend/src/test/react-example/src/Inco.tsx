@@ -35,7 +35,6 @@ export default function IncoTest({
   const handleCiphertextCreate = async () => {
     setIsEncrypting(true)
     try {
-      const zap = await Lightning.localNode('devnet');
       const incoLite = await createIncoLite(chain, pepper)
       setIncoLite(incoLite)
       const encryptedValue = await encrypt(
@@ -45,6 +44,7 @@ export default function IncoTest({
         hostChainRpcUrls[0]!,
         value,
         addTwoAddress,
+        pepper as string,
       )
       setCiphertext(encryptedValue)
       setError(null)
