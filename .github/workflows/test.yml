@@ -7,9 +7,17 @@ on:
   workflow_dispatch:
     inputs:
       sdk_version:
-        description: "Version of @inco SDK packages to test against (e.g. 0.9.0)"
+        description: "Version of @inco SDK packages to test against (e.g. 1.0.0-rc-8)"
         required: true
         type: string
+      pepper:
+        description: "Local-node network/pepper to test against"
+        type: choice
+        default: mainnet
+        options:
+          - mainnet
+          - testnet
+          - devnet
 
 jobs:
   test:
@@ -28,10 +36,11 @@ jobs:
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
 
-      - name: Override SDK version in package.json and .env
+      - name: Override SDK version and pepper in package.json and .env
         if: github.event_name == 'workflow_dispatch'
         env:
           SDK_VERSION: ${{ inputs.sdk_version }}
+          PEPPER: ${{ inputs.pepper }}
         run: |
           jq --arg v "$SDK_VERSION" \
             '.overrides["@inco/js"] = $v
@@ -41,14 +50,8 @@ jobs:
           mv package.json.tmp package.json
 
           sed -i "s/^DOCKER_IMAGE_TAG=.*/DOCKER_IMAGE_TAG=v$SDK_VERSION/" .env
-
-          if [[ "$SDK_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+-([a-zA-Z]+)-[0-9]+$ ]]; then
-            PEPPER="${BASH_REMATCH[1]}"
-          else
-            PEPPER="testnet"
-          fi
           sed -i "s/^PEPPER=.*/PEPPER=$PEPPER/" .env
-          echo "PEPPER updated to $PEPPER"
+          echo "Using SDK version $SDK_VERSION with pepper $PEPPER"
 
       - run: bun install
       - run: bun run test
