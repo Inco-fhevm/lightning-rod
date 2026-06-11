@@ -4,12 +4,15 @@ import { Lightning, LocalNodePepper } from '@inco/js/lite';
 import { handleTypes } from '@inco/js';
 import { Chain, createPublicClient, createWalletClient, defineChain, getContract, Hex, http, parseGwei } from 'viem';
 import { Address, privateKeyToAccount } from 'viem/accounts';
-import { anvil } from 'viem/chains';
+import { anvil, base } from 'viem/chains';
 export const createIncoLite = async (chain: Chain, pepper: any) => {
   if (chain === anvil) {
     return await Lightning.localNode(pepper);
   }
-  return await Lightning.latest(pepper, chain.id as any);
+  if (chain.id === base.id) {
+    return await Lightning.baseMainnet();
+  }
+  return await Lightning.baseSepoliaTestnet();
 };
 export const encrypt = async (
   lightning: Lightning,
