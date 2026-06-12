@@ -19,5 +19,5 @@ export async function readFileFromRoot(...paths: string[]): Promise<Buffer> {
 }
 
 export function getPepper(): LocalNodePepper {
-  return (process.env.PEPPER ?? 'testnet') as LocalNodePepper;
+  return (process.env.PEPPER ?? 'mainnet') as LocalNodePepper;
 }

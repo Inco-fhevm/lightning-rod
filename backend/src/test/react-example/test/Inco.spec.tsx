@@ -9,7 +9,7 @@ import { addTwoAbi } from '../src/abis.js';
 import { fundAccount, E2EConfig } from '../src/test-helpers.js';
 import { Lightning, LocalNodePepper } from '@inco/js/lite';
 
-const pepper = (process.env.PEPPER ?? 'testnet') as LocalNodePepper;
+const pepper = (process.env.PEPPER ?? 'mainnet') as LocalNodePepper;
 
 // Deploys the AddTwo.sol contract on the host chain.
 async function deployAddTwo(cfg: E2EConfig): Promise<Address> {
