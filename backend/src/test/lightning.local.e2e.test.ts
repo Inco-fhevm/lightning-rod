@@ -1,4 +1,4 @@
-import { Lightning } from '@inco/js/lite';
+import { Lightning } from '@inco/lightning-js/lite';
 import { Hex } from 'viem';
 import { anvil } from 'viem/chains';
 import { describe } from 'vitest';

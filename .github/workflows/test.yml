@@ -43,9 +43,8 @@ jobs:
           PEPPER: ${{ inputs.pepper }}
         run: |
           jq --arg v "$SDK_VERSION" \
-            '.overrides["@inco/js"] = $v
-              | .overrides["@inco/lightning"] = $v
-              | .overrides["@inco/lightning-preview"] = $v' \
+            '.overrides["@inco/lightning-js"] = $v
+              | .overrides["@inco/lightning"] = $v' \
             package.json > package.json.tmp
           mv package.json.tmp package.json
 

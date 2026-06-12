@@ -7,7 +7,7 @@ import { privateKeyToAccount } from 'viem/accounts';
 import addTwoBuild from '../../../../../contracts/out/AddTwo.sol/AddTwo.json';
 import { addTwoAbi } from '../src/abis.js';
 import { fundAccount, E2EConfig } from '../src/test-helpers.js';
-import { Lightning, LocalNodePepper } from '@inco/js/lite';
+import { Lightning, LocalNodePepper } from '@inco/lightning-js/lite';
 
 const pepper = (process.env.PEPPER ?? 'mainnet') as LocalNodePepper;
 

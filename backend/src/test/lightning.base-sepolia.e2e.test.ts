@@ -1,5 +1,5 @@
-import { HexString, parse } from '@inco/js';
-import { Lightning } from '@inco/js/lite';
+import { HexString, parse } from '@inco/lightning-js';
+import { Lightning } from '@inco/lightning-js/lite';
 import { baseSepolia } from 'viem/chains';
 import { describe } from 'vitest';
 import { loadDotEnv } from '../repo.ts';

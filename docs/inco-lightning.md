@@ -1,6 +1,6 @@
 # Inco Lightning
 
-Inco Lightning is a protocol for computing over confidential values on an Ethereum chain. This describes how to interact with confidentiality-enabled smart contracts using the [Inco JS SDK](https://www.npmjs.com/package/@inco/js).
+Inco Lightning is a protocol for computing over confidential values on an Ethereum chain. This describes how to interact with confidentiality-enabled smart contracts using the [Inco Lightning JS SDK](https://www.npmjs.com/package/@inco/lightning-js).
 
 With Inco Lightning you can compute over encrypted values without ever revealing them publicly. Later, the results of these computations can be revealed publicly via on-chain _decryption_ or requested privately to permitted users via off-chain _reencryption_.
 
