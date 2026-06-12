@@ -1,5 +1,5 @@
-import { handleTypes, HexString, parseAddress } from '@inco/js';
-import { Lightning } from '@inco/js/lite';
+import { handleTypes, HexString, parseAddress } from '@inco/lightning-js';
+import { Lightning } from '@inco/lightning-js/lite';
 import {
   type Address,
   createPublicClient,

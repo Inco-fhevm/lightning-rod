@@ -6,7 +6,7 @@ import { addTwoAbi } from './abis.ts'
 import { createPublicClient, defineChain, fallback, getContract, parseEther } from 'viem'
 import { parseGwei } from 'viem'
 import { createWalletClient, http } from 'viem'
-import { Lightning } from '@inco/js/lite'
+import { Lightning } from '@inco/lightning-js/lite'
 
 
 type IncoTestProps = {

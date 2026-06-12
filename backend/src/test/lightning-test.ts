@@ -1,8 +1,8 @@
-import { incoLightningAbi } from '@inco/js/abis/lightning';
+import { incoLightningAbi } from '@inco/lightning-js/abis/lightning';
 import { Transport, PublicClient, Address, type Chain, type Hex, Account, WalletClient, GetContractReturnType, getContract, http, parseGwei, createWalletClient, createPublicClient, defineChain, fallback } from 'viem';
 import { runAddTwoE2ETest } from './lightning-addtwo.js';
 import { runLibTestE2ETest } from './lightning-libtest.js';
-import { Lightning } from '@inco/js/lite';
+import { Lightning } from '@inco/lightning-js/lite';
 import { privateKeyToAccount } from 'viem/accounts';
 import { runElistTestE2ETest } from './lightning-elisttest.ts';
 

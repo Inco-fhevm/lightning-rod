@@ -1,7 +1,7 @@
 import * as dotenv from 'dotenv';
 import { readFile } from 'fs/promises';
 import * as path from 'path';
-import type { LocalNodePepper } from '@inco/js/lite';
+import type { LocalNodePepper } from '@inco/lightning-js/lite';
 
 const root = path.resolve(__dirname, '..', '..');
 

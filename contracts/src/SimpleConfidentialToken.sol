@@ -26,7 +26,7 @@ contract SimpleConfidentialToken {
     }
 
     // this function is meant to be called by EOAs or smart wallets as valueInput is an encrypted amount that should
-    // be generated using @inco/js sdk
+    // be generated using @inco/lightning-js sdk
     function transfer(address to, bytes memory valueInput) external payable returns (ebool) {
         require(msg.value == inco.getFee(),"Fee not paid");
         // `newInput` returns an euint256 from an encrypted input, if the encrypted input is malformed, it will return

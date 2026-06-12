@@ -1,5 +1,5 @@
-import { handleTypes, parseAddress } from '@inco/js';
-import { incoLightningAbi, Lightning } from '@inco/js/lite';
+import { handleTypes, parseAddress } from '@inco/lightning-js';
+import { incoLightningAbi, Lightning } from '@inco/lightning-js/lite';
 import {
   type Address,
   type Chain,

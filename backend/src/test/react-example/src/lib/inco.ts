@@ -1,7 +1,7 @@
-import { incoLightningAbi } from '@inco/js/abis/lightning';
-import { incoVerifierAbi } from '@inco/js/abis/verifier';
-import { Lightning, LocalNodePepper } from '@inco/js/lite';
-import { handleTypes } from '@inco/js';
+import { incoLightningAbi } from '@inco/lightning-js/abis/lightning';
+import { incoVerifierAbi } from '@inco/lightning-js/abis/verifier';
+import { Lightning, LocalNodePepper } from '@inco/lightning-js/lite';
+import { handleTypes } from '@inco/lightning-js';
 import { Chain, createPublicClient, createWalletClient, defineChain, getContract, Hex, http, parseGwei } from 'viem';
 import { Address, privateKeyToAccount } from 'viem/accounts';
 import { anvil, base } from 'viem/chains';
