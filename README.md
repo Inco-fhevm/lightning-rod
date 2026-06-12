@@ -54,12 +54,6 @@ bun test:e2e
 
 This compiles some contracts with Foundry and run a local Inco Lightning environment (runs the docker compose) in the background.
 
-If you have the docker compose already running in the background, you can run the test like so:
-
-```bash
-cd backend && bun run test:e2e
-```
-
 ### Testing a Confidential Smart Contract
 
 An example of a simple confidential token using inco is provided in `contracts/`.  

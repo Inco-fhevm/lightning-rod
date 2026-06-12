@@ -1,14 +1,12 @@
 services:
   # Anvil node
   anvil:
-    platform: linux/amd64 # mac compatibility
     image: inconetwork/local-node-anvil-${PEPPER}:${DOCKER_IMAGE_TAG}
     ports:
       - "8545:8545"
 
   # Covalidator service that waits for deployer to be healthy
   covalidator:
-    platform: linux/amd64 # mac compatibility
     image: inconetwork/local-node-covalidator-${PEPPER}:${DOCKER_IMAGE_TAG}
     depends_on:
       anvil:
