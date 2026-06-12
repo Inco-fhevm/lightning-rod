@@ -1,0 +1,6 @@
+[install]
+# Foundry remappings (contracts/remappings.txt) resolve Solidity deps from a
+# flat, hoisted root node_modules (e.g. ../node_modules/@openzeppelin/...).
+# Bun's isolated linker nests transitive deps under node_modules/.bun/ and
+# breaks `forge compile`. Force the hoisted layout so CI and local match.
+linker = "hoisted"
