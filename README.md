@@ -45,7 +45,7 @@ This is useful to deploy your dapp locally and test it in a simulated environmen
 ### Running simple end-to-end test
 
 This test makes sure your local inco environment works properly.  
-You can run the [`incolite.local.e2e.test.ts`](./test/src/incolite.local.e2e.test.ts) and automatically boot the local test network with:
+You can run the [`lightning.local.e2e.test.ts`](./backend/src/test/lightning.local.e2e.test.ts) and automatically boot the local test network with:
 
 ```bash
 # no need to have docker compose running prior to this command. Have the docker daemon up.
