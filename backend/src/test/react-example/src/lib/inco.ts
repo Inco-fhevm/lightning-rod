@@ -14,6 +14,14 @@ export const createIncoLite = async (chain: Chain, pepper: any) => {
   }
   return await Lightning.baseSepoliaTestnet();
 };
+const getHandleType = (value: bigint | boolean) => {
+  if (typeof value === 'boolean') {
+    return handleTypes.ebool;
+  }
+
+  return handleTypes.euint256;
+};
+
 export const encrypt = async (
   lightning: Lightning,
   privateKey: Hex,
@@ -60,7 +68,7 @@ export const encrypt = async (
     {
       accountAddress: walletClient.account.address,
       dappAddress: addTwoAddress,
-      handleType: handleTypes.euint256,
+      handleType: getHandleType(value),
     },
   );
   return ciphertext;
