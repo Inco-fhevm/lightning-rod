@@ -5,8 +5,11 @@ import { handleTypes } from '@inco/lightning-js';
 import { Chain, createPublicClient, createWalletClient, defineChain, getContract, Hex, http, parseGwei } from 'viem';
 import { Address, privateKeyToAccount } from 'viem/accounts';
 import { anvil, base } from 'viem/chains';
+
+const isLocalChain = (chain: Chain) => chain.id === anvil.id;
+
 export const createIncoLite = async (chain: Chain, pepper: any) => {
-  if (chain === anvil) {
+  if (isLocalChain(chain)) {
     return await Lightning.localNode(pepper);
   }
   if (chain.id === base.id) {
@@ -24,7 +27,7 @@ export const encrypt = async (
   pepper: string,
 ) => {
   let privateKeyHex: Hex;
-  if (chain === anvil) {
+  if (isLocalChain(chain)) {
     const zap = await Lightning.localNode(pepper as LocalNodePepper);
     privateKeyHex = zap.deployment.senderPrivateKey as Hex;
   } else {
