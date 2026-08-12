@@ -51,4 +51,18 @@ contract TestSimpleConfidentialToken is IncoTest {
         assertEq(decryptedBobBalance, 1 * GWEI);
         assertEq(decryptedAliceBalance, 9 * GWEI);
     }
+
+    // A transfer to self must be a no-op. If the debit and the credit are both computed from the
+    // pre-transfer balance, the credit overwrites the debit and the sender ends up minting tokens.
+    function testSelfTransferDoesNotMintTokens() public {
+        vm.deal(address(alice), inco.getFee());
+        // Alice sends her whole balance (10 GWEI) to herself.
+        bytes memory ciphertext = fakePrepareEuint256Ciphertext(10 * GWEI, alice, address(token));
+        vm.startPrank(alice);
+        token.transfer{value: inco.getFee()}(alice, ciphertext);
+        vm.stopPrank();
+        processAllOperations();
+
+        assertEq(getUint256Value(token.balanceOf(alice)), 10 * GWEI);
+    }
 }

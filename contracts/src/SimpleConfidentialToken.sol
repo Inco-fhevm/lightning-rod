@@ -57,11 +57,14 @@ contract SimpleConfidentialToken {
         // if the balance is insufficient, which is equivalent to doing nothing.
         euint256 transferredValue = success.select(value, uint256(0).asEuint256());
 
-        // saving handles used multiple times in memory variables to save some gas
+        // saving handles used multiple times in memory variables to save some gas.
+        // the debit must be written to storage before the credit is computed: when `to` is the
+        // sender itself both sides alias the same slot, so reading both balances up front would
+        // make the credit overwrite the debit and mint `transferredValue` out of thin air.
         euint256 senderNewBalance = balanceOf[msg.sender].sub(transferredValue);
-        euint256 receiverNewBalance = balanceOf[to].add(transferredValue);
-
         balanceOf[msg.sender] = senderNewBalance;
+
+        euint256 receiverNewBalance = balanceOf[to].add(transferredValue);
         balanceOf[to] = receiverNewBalance;
 
         // allow the sender to see its new balance
