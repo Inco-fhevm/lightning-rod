@@ -55,6 +55,40 @@ The process for developing a dapp with confidential compute is as follows:
 **Access values by off-chain reencryption**
 - A user that is permitted to access an encrypted handle to a value (mediated by an on-chain access control contract) is able to obtain the decrypted value corresponding to the handle off-chain via a bilateral interaction with our covalidators.
 
+## Client-side usage
 
+The client side of this flow is handled by the `Lightning` client from the Inco Lightning JS SDK. Encrypted inputs are produced with `lightning.encrypt(...)`, and a handle's value is retrieved off-chain with `lightning.attestedDecrypt(...)`, which asks the covalidators to authenticate the request and return the attested plaintext for a wallet-authorized caller.
 
+```typescript
+import { handleTypes } from '@inco/lightning-js';
+import { Lightning } from '@inco/lightning-js/lite';
+import { createWalletClient, http } from 'viem';
+import { privateKeyToAccount } from 'viem/accounts';
 
+// Bind to a deployment.
+const lightning = await Lightning.baseSepoliaTestnet();
+
+const account = privateKeyToAccount(privateKey);
+const walletClient = createWalletClient({
+  chain, // a viem Chain for the host chain, e.g. Base Sepolia
+  transport: http(hostChainRpcUrl),
+  account,
+});
+
+// Encrypt an input for a call into the dapp contract.
+const ciphertext = await lightning.encrypt(value, {
+  accountAddress: walletClient.account.address,
+  dappAddress,
+  handleType: handleTypes.euint256,
+});
+
+// ... send `ciphertext` in a transaction to the dapp contract, which returns a `handle` ...
+
+// Reveal the value behind a handle off-chain.
+const decrypted = await lightning.attestedDecrypt(walletClient, [handle]);
+const plaintext = decrypted[0]?.plaintext?.value;
+```
+
+- `Lightning.baseSepoliaTestnet()`, `Lightning.baseMainnet()`, and `Lightning.localNode(pepper)` bind a `Lightning` client to a specific deployment.
+- `lightning.encrypt(value, { accountAddress, dappAddress, handleType })` encrypts a value for a specific dapp contract and returns the ciphertext to submit on-chain. `handleType` comes from `handleTypes`, exported from `@inco/lightning-js`.
+- `lightning.attestedDecrypt(walletClient, [handle])` requests an attested, authenticated decryption of one or more handles from the covalidators and returns an array of results, with each plaintext at `result[0]?.plaintext?.value`. The SDK also supports reencryption modes for callers that need the value re-encrypted rather than returned in plaintext: one returns it re-encrypted for a delegate, and another re-encrypts it for local decryption by the caller.
