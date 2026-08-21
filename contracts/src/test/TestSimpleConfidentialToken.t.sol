@@ -33,6 +33,17 @@ contract TestSimpleConfidentialToken is IncoTest {
         assertEq(decryptedAliceBalance, 10 * GWEI);
     }
 
+    function testSelfTransferDoesNotMint() public {
+        vm.deal(address(alice), inco.getFee());
+        bytes memory ciphertext = fakePrepareEuint256Ciphertext(5 * GWEI, alice, address(token));
+        vm.startPrank(alice);
+        token.transfer{value: inco.getFee()}(alice, ciphertext);
+        vm.stopPrank();
+        processAllOperations();
+        // Sending to yourself must leave the balance untouched.
+        assertEq(getUint256Value(token.balanceOf(alice)), 10 * GWEI);
+    }
+
     function testTransfer() public {
         vm.deal(address(alice), inco.getFee());
         bytes memory ciphertext = fakePrepareEuint256Ciphertext(1 * GWEI, alice, address(token));
