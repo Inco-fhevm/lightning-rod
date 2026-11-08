@@ -18,6 +18,7 @@ import { elistTestAbi } from '../generated/abis.js';
 import { type E2EConfig } from './lightning-test.js';
 
 import type { E2EParams } from './lightning-test.js';
+import { expectPermutation } from './elist-assertions.js';
 
 // Deploys the ElistTest.sol contract on the host chain.
 async function deployElistTest(cfg: E2EConfig): Promise<Address> {
@@ -277,7 +278,7 @@ export function runElistTestE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EP
     });
 
     describe('List Shuffle', () => {
-      it('should shuffle list and change element positions', async () => {
+      it('should shuffle list while preserving its values', async () => {
         // Create a fresh list with unique values
         const values = [100, 200, 300, 400, 500];
         const inputCts = [];
@@ -328,22 +329,7 @@ export function runElistTestE2ETest(zap: Lightning, cfg: E2EConfig, params: E2EP
         }
         console.log('Elements after shuffle:', valuesAfter);
 
-        // Verify all original values are still present (just reordered)
-        for (const val of values) {
-          expect(valuesAfter).toContain(BigInt(val));
-        }
-
-        // Check if at least one element changed position
-        let positionChanged = false;
-        for (let i = 0; i < values.length; i++) {
-          if (valuesBefore[i] !== valuesAfter[i]) {
-            positionChanged = true;
-            break;
-          }
-        }
-
-        expect(positionChanged).toBe(true);
-        console.log('At least one element changed position:', positionChanged);
+        expectPermutation(valuesAfter, valuesBefore);
       }, 320_000);
     });
 

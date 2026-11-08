@@ -3,6 +3,7 @@
   "license": "Apache-2.0",
   "type": "module",
   "scripts": {
+    "test:unit": "bun vitest run src/test/elist-assertions.test.ts src/test/fund-account.test.ts",
     "test:e2e": "bun vitest run src/test/lightning.local.e2e.test.ts",
     "test:frontend:build": "bun vitest run src/test/build-validation.test.ts",
     "test:frontend": "pushd src/test/react-example && bun run test && popd",

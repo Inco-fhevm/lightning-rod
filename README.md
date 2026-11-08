@@ -42,6 +42,16 @@ docker compose up
 
 This is useful to deploy your dapp locally and test it in a simulated environment.
 
+### Running offline unit tests
+
+After installing dependencies, run `bun test:unit` to check shuffle permutation
+assertions and frontend account-funding receipt ordering without Docker, Foundry,
+or an RPC connection. These checks also run before the full `bun test` suite.
+
+Shuffle assertions accept the unchanged ordering as a valid permutation and
+preserve duplicate counts. The frontend funding helper waits for the funding
+transaction receipt before allowing deployment to proceed.
+
 ### Running simple end-to-end test
 
 This test makes sure your local inco environment works properly.  

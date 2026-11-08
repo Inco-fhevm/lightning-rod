@@ -19,10 +19,15 @@ export async function fundAccount(senderPrivKey: Hex, chain: Chain, hostChainRpc
     chain,
     transport: http(hostChainRpcUrl),
   });
-  await richWalletClient.sendTransaction({
+  const hash = await richWalletClient.sendTransaction({
     account: richAccount,
     to: account.address,
     value: parseEther('1'),
   });
+  const publicClient = createPublicClient({
+    chain,
+    transport: http(hostChainRpcUrl),
+  });
+  await publicClient.waitForTransactionReceipt({ hash });
 }
 
