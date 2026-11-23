@@ -22,7 +22,12 @@ contract SimpleConfidentialToken {
         // units are GWEI instead of WADs (WADs being 18 decimals, used in ERC20)
         // `uint256(1000 * 1e9).asEuint256()` is a trivial encrypt, i.e it converts a known value into
         // an e-type. We can also write `e.asEuint256(1000 * 1e9);`
-        balanceOf[msg.sender] = uint256(1000 * 1e9).asEuint256();
+        euint256 initialBalance = uint256(1000 * 1e9).asEuint256();
+        balanceOf[msg.sender] = initialBalance;
+        // persist access on the initial balance: without allowThis the token cannot compute over it in
+        // transfer(), and without allow(msg.sender) the deployer cannot decrypt it
+        initialBalance.allowThis();
+        initialBalance.allow(msg.sender);
     }
 
     // this function is meant to be called by EOAs or smart wallets as valueInput is an encrypted amount that should
